@@ -7,7 +7,7 @@ public class Fresher extends Candidate {
     private String graduationRank;
     private String education;
 
-    Fresher() {
+    public Fresher() {
     }
 
     public Date getGraduationDate() {

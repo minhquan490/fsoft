@@ -6,7 +6,7 @@ public class Experience extends Candidate {
     private int expInYear;
     private int proSkill;
 
-    Experience() {
+    public Experience() {
     }
 
     public int getExpInYear() {

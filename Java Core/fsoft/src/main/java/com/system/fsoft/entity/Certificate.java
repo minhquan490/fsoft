@@ -10,7 +10,7 @@ public class Certificate implements Serializable {
     private Date certificatedDate;
     private Candidate candidate;
 
-    Certificate() {
+    public Certificate() {
     }
 
     public Date getCertificatedDate() {

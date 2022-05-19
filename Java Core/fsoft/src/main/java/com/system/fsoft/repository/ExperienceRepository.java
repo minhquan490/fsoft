@@ -1,23 +1,24 @@
 package com.system.fsoft.repository;
 
+import java.sql.SQLException;
 import java.util.List;
 
 import com.system.fsoft.entity.Experience;
 
 public interface ExperienceRepository {
-    void save(Experience experience);
+    void save(Experience experience) throws SQLException;
 
-    void edit(Experience experience);
+    void edit(Experience experience) throws SQLException;
 
-    void delete(Experience experience);
+    void delete(String candidateName) throws SQLException;
 
-    Experience getByID(String idCandidate);
+    Experience getByID(String idCandidate) throws SQLException;
 
-    Experience getByName(String candidateName);
+    Experience getByName(String candidateName) throws SQLException;
 
-    List<Experience> getAll();
+    List<Experience> getAll() throws SQLException;
 
-    List<Experience> getByExperience(int expInYear);
+    List<Experience> getByExperience(int expInYear) throws SQLException;
 
-    List<Experience> getByAdvancedSkills(int proSkill);
+    List<Experience> getByAdvancedSkills(int proSkill) throws SQLException;
 }

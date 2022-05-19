@@ -9,12 +9,13 @@ public class Candidate implements Serializable {
     private Date birthDate;
     private String phone;
     private String email;
+    private int candidateType;
     private int candidateCount;
 
-    Candidate() {
+    public Candidate() {
     }
 
-    Candidate(String candidateID, String fullName, Date birthDate, String phone, String email) {
+    public Candidate(String candidateID, String fullName, Date birthDate, String phone, String email) {
         this.candidateID = candidateID;
         this.fullName = fullName;
         this.birthDate = birthDate;
@@ -68,6 +69,14 @@ public class Candidate implements Serializable {
 
     public void setCandidateCount(int candidateCount) {
         this.candidateCount = candidateCount;
+    }
+
+    public int getCandidateType() {
+        return candidateType;
+    }
+
+    public void setCandidateType(int candidateType) {
+        this.candidateType = candidateType;
     }
 
     void showInfo() {

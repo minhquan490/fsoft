@@ -8,7 +8,7 @@ public class Intern extends Candidate {
     private int semester;
     private String universityName;
 
-    Intern() {
+    public Intern() {
     }
 
     public String getMajor() {
