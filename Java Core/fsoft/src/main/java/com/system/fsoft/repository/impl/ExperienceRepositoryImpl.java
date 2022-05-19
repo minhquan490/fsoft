@@ -51,7 +51,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             Thread.sleep(200);
             statement.executeUpdate();
         } catch (Exception e) {
-            System.out.println("Server Internal Error");
+            System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
         } finally {
             statement.close();
             connection.commit();
@@ -72,7 +72,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
                 Thread.sleep(200);
                 statement.executeUpdate();
             } catch (Exception e) {
-                System.out.println("Server Internal Error");
+                System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             } finally {
                 statement.close();
                 connection.commit();
@@ -82,15 +82,14 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
 
     @Override
     public void delete(String candidateName) throws SQLException {
-        Experience experience = this.getByName(candidateName);
-        if (experience.getFullName() != null) {
+        if (this.getByName(candidateName).getFullName() != null) {
             try {
                 connection = DatabaseConfig.getConnection();
                 statement = connection.prepareStatement(DELETE_QUERY);
                 statement.setString(1, candidateName);
                 statement.executeUpdate();
             } catch (Exception e) {
-                System.out.println("Server Internal Error");
+                System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             } finally {
                 statement.close();
                 connection.commit();
@@ -118,7 +117,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             experience.setProSkill(resultSet.getInt("Pro_Skill"));
             return experience;
         } catch (Exception e) {
-            System.out.println("Server Internal Error");
+            System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             return null;
         } finally {
             resultSet.close();
@@ -145,7 +144,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             experience.setProSkill(resultSet.getInt("Pro_Skill"));
             return experience;
         } catch (Exception e) {
-            System.out.println("Server Internal Error");
+            System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             return null;
         } finally {
             resultSet.close();
@@ -175,7 +174,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             }
             return experiences;
         } catch (Exception e) {
-            System.out.println("Server Internal Error");
+            System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             return null;
         } finally {
             resultSet.close();
@@ -206,7 +205,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             }
             return experiences;
         } catch (Exception e) {
-            System.out.println("Server Internal Error");
+            System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             return null;
         } finally {
             resultSet.close();
@@ -237,7 +236,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             }
             return experiences;
         } catch (Exception e) {
-            System.out.println("Server Internal Error");
+            System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             return null;
         } finally {
             resultSet.close();
