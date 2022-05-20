@@ -12,6 +12,8 @@ public interface ExperienceRepository {
 
     void delete(String candidateName) throws SQLException;
 
+    void saveOrUpdate(Experience experience) throws SQLException;
+
     Experience getByID(String idCandidate) throws SQLException;
 
     Experience getByName(String candidateName) throws SQLException;

@@ -25,15 +25,18 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
     private static final String DELETE_QUERY = "DELETE FROM Candidate c WHERE c.Full_Name = ?";
 
     private static final String UPDATE_QUERY = "UPDATE Experience SET Exp_In_Year = ?, Pro_Skill = ? WHERE Candidate_ID = ?";
-    private static final String UPDATE_CANDIDATE = "UPDATE Candidate SET Full_Name = ?, Birth_Day = ?, Phone = ?, Email = ? WHERE Candidate_ID = ?";
+    private static final String UPDATE_CANDIDATE = "UPDATE Candidate SET Full_Name = ?, Birth_Day = ?, Phone = ?, Email = ?, Candidate_Type = ? WHERE Candidate_ID = ?";
 
-    private static final String SELECT_QUERY_BY_NAME = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, e.Exp_In_Year, e.Pro_Skill FROM Experience e"
+    private static final String SELECT_TO_INSET_OR_UPDATE_QUERY = "SELECT * FROM Experience e WHERE e.Candidate_ID = ?";
+    private static final String SELECT_CANDIDATE_TO_INSERT_OR_UPDATE = "SELECT * FROM Candidate c WHERE c.Candidate_ID = ?";
+
+    private static final String SELECT_QUERY_BY_NAME = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Exp_In_Year, e.Pro_Skill FROM Experience e"
             + "RIGHT JOIN Candidate c ON c.Candidate_ID = e.Candidate_ID" + "WHERE c.Candidate_Name = ?";
-    private static final String SELECT_QUERY_BY_ID = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, e.Exp_In_Year, e.Pro_Skill FROM Experience e"
+    private static final String SELECT_QUERY_BY_ID = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Exp_In_Year, e.Pro_Skill FROM Experience e"
             + "RIGHT JOIN Candidate c ON c.Candidate_ID = e.Candidate_ID" + "WHERE c.Candidate_ID = ?";
     private static final String SELECT_ALL = "SELECT * FROM Candidate c FULL JOIN Experience e ON c.Candidate_ID = e.Candidate_ID ORDER BY c.Full_Name";
-    private static final String SELECT_BY_EXP = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, e.Pro_Skill FROM Candidate c LEFT JOIN Experience e WHERE e.Exp_In_Year = ? ORDER BY c.Full_Name";
-    private static final String SELECT_BY_SKILL = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, e.Exp_In_Year FROM Candidate c LEFT JOIN Experience e WHERE e.Pro_Skill = ? ORDER BY c.Full_Name";
+    private static final String SELECT_BY_EXP = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Pro_Skill FROM Candidate c LEFT JOIN Experience e WHERE e.Exp_In_Year = ? ORDER BY c.Full_Name";
+    private static final String SELECT_BY_SKILL = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Exp_In_Year FROM Candidate c LEFT JOIN Experience e WHERE e.Pro_Skill = ? ORDER BY c.Full_Name";
 
     public ExperienceRepositoryImpl() {
     }
@@ -50,11 +53,14 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             statement.setInt(3, experience.getProSkill());
             Thread.sleep(200);
             statement.executeUpdate();
+            System.out.println("Insert success");
         } catch (Exception e) {
             System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
         } finally {
-            statement.close();
-            connection.commit();
+            if (connection != null) {
+                statement.close();
+                connection.commit();
+            }
         }
     }
 
@@ -71,9 +77,55 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
                 statement.setString(3, experience.getCandidateID());
                 Thread.sleep(200);
                 statement.executeUpdate();
+                System.out.println("Update success");
             } catch (Exception e) {
                 System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             } finally {
+                if (connection != null) {
+                    statement.close();
+                    connection.commit();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void saveOrUpdate(Experience experience) throws SQLException {
+        try {
+            connection = DatabaseConfig.getConnection();
+            if (experience.getCandidateID() != null) {
+                candidateRepository = new CandidateRepositoryImpl(experience, SELECT_CANDIDATE_TO_INSERT_OR_UPDATE);
+                statement = connection.prepareStatement(SELECT_TO_INSET_OR_UPDATE_QUERY,
+                        ResultSet.TYPE_SCROLL_INSENSITIVE,
+                        ResultSet.CONCUR_UPDATABLE);
+                candidateRepository.run();
+                statement.setString(1, experience.getCandidateID());
+                resultSet = statement.executeQuery();
+                resultSet.updateInt(2, experience.getExpInYear());
+                resultSet.updateInt(3, experience.getProSkill());
+                Thread.sleep(200);
+                resultSet.updateRow();
+                System.out.println("Update success");
+            } else {
+                candidateRepository = new CandidateRepositoryImpl(experience, SELECT_CANDIDATE_TO_INSERT_OR_UPDATE);
+                statement = connection.prepareStatement(SELECT_CANDIDATE_TO_INSERT_OR_UPDATE,
+                        ResultSet.TYPE_SCROLL_INSENSITIVE,
+                        ResultSet.CONCUR_UPDATABLE);
+                statement.setString(1, experience.getCandidateID());
+                candidateRepository.run();
+                resultSet = statement.executeQuery();
+                resultSet.moveToInsertRow();
+                resultSet.updateInt(2, experience.getExpInYear());
+                resultSet.updateInt(3, experience.getProSkill());
+                Thread.sleep(200);
+                resultSet.insertRow();
+                System.out.println("Insert success");
+            }
+        } catch (Exception e) {
+            System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
+        } finally {
+            if (connection != null) {
+                resultSet.close();
                 statement.close();
                 connection.commit();
             }
@@ -91,8 +143,10 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             } catch (Exception e) {
                 System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             } finally {
-                statement.close();
-                connection.commit();
+                if (connection != null) {
+                    statement.close();
+                    connection.commit();
+                }
             }
         } else {
             System.out.println("Candidate not exist");
@@ -120,9 +174,11 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             return null;
         } finally {
-            resultSet.close();
-            statement.close();
-            connection.commit();
+            if (connection != null) {
+                resultSet.close();
+                statement.close();
+                connection.commit();
+            }
         }
     }
 
@@ -147,9 +203,11 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             return null;
         } finally {
-            resultSet.close();
-            statement.close();
-            connection.commit();
+            if (connection != null) {
+                resultSet.close();
+                statement.close();
+                connection.commit();
+            }
         }
     }
 
@@ -177,9 +235,11 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             return null;
         } finally {
-            resultSet.close();
-            statement.close();
-            connection.commit();
+            if (connection != null) {
+                resultSet.close();
+                statement.close();
+                connection.commit();
+            }
         }
     }
 
@@ -208,9 +268,11 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             return null;
         } finally {
-            resultSet.close();
-            statement.close();
-            connection.commit();
+            if (connection != null) {
+                resultSet.close();
+                statement.close();
+                connection.commit();
+            }
         }
     }
 
@@ -239,9 +301,11 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             return null;
         } finally {
-            resultSet.close();
-            statement.close();
-            connection.commit();
+            if (connection != null) {
+                resultSet.close();
+                statement.close();
+                connection.commit();
+            }
         }
     }
 }
