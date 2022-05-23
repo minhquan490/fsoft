@@ -103,9 +103,9 @@ public class CandidateRepositoryImpl implements CandidateRepository {
             statement = connection.prepareStatement(query,
                     ResultSet.TYPE_SCROLL_INSENSITIVE,
                     ResultSet.CONCUR_UPDATABLE);
-            statement.setString(1, candidate.getCandidateID());
             resultSet = statement.executeQuery();
             resultSet.moveToInsertRow();
+            statement.setString(1, candidate.getCandidateID());
             resultSet.updateString(2, candidate.getFullName());
             resultSet.updateDate(3, candidate.getBirthDate());
             resultSet.updateString(4, candidate.getPhone());

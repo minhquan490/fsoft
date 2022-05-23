@@ -10,7 +10,7 @@ public interface ExperienceRepository {
 
     void edit(Experience experience) throws SQLException;
 
-    void delete(String candidateName) throws SQLException;
+    void delete(Experience experience) throws SQLException;
 
     void saveOrUpdate(Experience experience) throws SQLException;
 

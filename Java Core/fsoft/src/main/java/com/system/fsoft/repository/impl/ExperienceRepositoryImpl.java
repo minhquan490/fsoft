@@ -22,7 +22,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
     private static final String INSERT_QUERY = "INSERT INTO Experience(Candidate_ID, Exp_In_Year, Pro_Skill) VALUES (?,?,?)";
     private static final String INSERT_CANDIDATE = "INSERT INTO Candidate(Candidate_ID, Full_Name, Birth_Day, Phone, Email, Candidate_Type) VALUES (?,?,?,?,?,?)";
 
-    private static final String DELETE_QUERY = "DELETE FROM Candidate c WHERE c.Full_Name = ?";
+    private static final String DELETE_QUERY = "DELETE FROM Candidate c WHERE c.Candidate_ID = ?";
 
     private static final String UPDATE_QUERY = "UPDATE Experience SET Exp_In_Year = ?, Pro_Skill = ? WHERE Candidate_ID = ?";
     private static final String UPDATE_CANDIDATE = "UPDATE Candidate SET Full_Name = ?, Birth_Day = ?, Phone = ?, Email = ?, Candidate_Type = ? WHERE Candidate_ID = ?";
@@ -107,14 +107,16 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
                 resultSet.updateRow();
                 System.out.println("Update success");
             } else {
-                candidateRepository = new CandidateRepositoryImpl(experience, SELECT_CANDIDATE_TO_INSERT_OR_UPDATE);
-                statement = connection.prepareStatement(SELECT_CANDIDATE_TO_INSERT_OR_UPDATE,
+                String selectInsertQuery = SELECT_CANDIDATE_TO_INSERT_OR_UPDATE.substring(0,
+                        SELECT_CANDIDATE_TO_INSERT_OR_UPDATE.lastIndexOf("W"));
+                candidateRepository = new CandidateRepositoryImpl(experience, selectInsertQuery);
+                statement = connection.prepareStatement(selectInsertQuery,
                         ResultSet.TYPE_SCROLL_INSENSITIVE,
                         ResultSet.CONCUR_UPDATABLE);
-                statement.setString(1, experience.getCandidateID());
                 candidateRepository.run();
                 resultSet = statement.executeQuery();
                 resultSet.moveToInsertRow();
+                statement.setString(1, experience.getCandidateID());
                 resultSet.updateInt(2, experience.getExpInYear());
                 resultSet.updateInt(3, experience.getProSkill());
                 Thread.sleep(200);
@@ -133,12 +135,12 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
     }
 
     @Override
-    public void delete(String candidateName) throws SQLException {
-        if (this.getByName(candidateName).getFullName() != null) {
+    public void delete(Experience experience) throws SQLException {
+        if (this.getByID(experience.getCandidateID()) != null) {
             try {
                 connection = DatabaseConfig.getConnection();
                 statement = connection.prepareStatement(DELETE_QUERY);
-                statement.setString(1, candidateName);
+                statement.setString(1, experience.getCandidateID());
                 statement.executeUpdate();
             } catch (Exception e) {
                 System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
