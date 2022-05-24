@@ -22,7 +22,7 @@ public class InternRepositoryImpl implements InternRepository {
     private static final String INSERT_QUERY = "INSERT INTO Intern(Candidate_ID, Major, Semester, Education) VALUES (?,?,?,?)";
     private static final String INSERT_CANDIDATE = "INSERT INTO Candidate(Candidate_ID, Full_Name, Birth_Day, Phone, Email, Candidate_Type) VALUES (?,?,?,?,?,?)";
 
-    private static final String DELETE_QUERY = "DELETE FROM Candidate c WHERE c.Full_Name = ?";
+    private static final String DELETE_QUERY = "DELETE FROM Candidate c WHERE c.Candidate_ID = ?";
 
     private static final String UPDATE_QUERY = "UPDATE Intern SET Major = ?, Semester = ?, Education = ? WHERE Candidate_ID = ?";
     private static final String UPDATE_CANDIDATE = "UPDATE Candidate SET Full_Name = ?, Birth_Day = ?, Phone = ?, Email = ?, Candidate_Type = ? WHERE Candidate_ID = ?";
@@ -75,7 +75,7 @@ public class InternRepositoryImpl implements InternRepository {
             statement.setString(4, intern.getUniversityName());
             Thread.sleep(200);
             statement.executeUpdate();
-            System.out.println("Insert success");
+            System.out.println("Update success");
         } catch (Exception e) {
             System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
         } finally {
@@ -87,12 +87,12 @@ public class InternRepositoryImpl implements InternRepository {
     }
 
     @Override
-    public void delete(String candidateName) throws SQLException {
-        if (this.getByName(candidateName).getFullName() != null) {
+    public void delete(Intern intern) throws SQLException {
+        if (this.getByID(intern.getCandidateID()) != null) {
             try {
                 connection = DatabaseConfig.getConnection();
                 statement = connection.prepareStatement(DELETE_QUERY);
-                statement.setString(1, candidateName);
+                statement.setString(1, intern.getCandidateID());
                 statement.executeUpdate();
             } catch (Exception e) {
                 System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");

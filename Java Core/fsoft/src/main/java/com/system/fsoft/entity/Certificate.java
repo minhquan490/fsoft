@@ -49,6 +49,10 @@ public class Certificate implements Serializable {
         this.candidate = candidate;
     }
 
+    public Candidate getCandidate() {
+        return candidate;
+    }
+
     public String getCandidateID() {
         return candidate.getCandidateID();
     }

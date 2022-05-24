@@ -6,11 +6,12 @@ import java.util.List;
 import com.system.fsoft.entity.Intern;
 
 public interface InternService {
+
     void save(Intern intern) throws SQLException;
 
     void edit(Intern intern) throws SQLException;
 
-    void delete(String candidateName) throws SQLException;
+    void delete(Intern intern) throws SQLException;
 
     void saveOrUpdate(Intern intern) throws SQLException;
 

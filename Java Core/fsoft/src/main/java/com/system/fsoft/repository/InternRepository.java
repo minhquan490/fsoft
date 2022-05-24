@@ -10,7 +10,7 @@ public interface InternRepository {
 
     void edit(Intern intern) throws SQLException;
 
-    void delete(String candidateName) throws SQLException;
+    void delete(Intern intern) throws SQLException;
 
     void saveOrUpdate(Intern intern) throws SQLException;
 
