@@ -83,4 +83,9 @@ public class InternServiceImpl implements InternService {
     public List<Intern> getByUniversity(String universityName) throws SQLException {
         return repository.getByUniversity(universityName);
     }
+
+    @Override
+    public int countInDatabase() throws SQLException {
+        return repository.countInDatabase();
+    }
 }

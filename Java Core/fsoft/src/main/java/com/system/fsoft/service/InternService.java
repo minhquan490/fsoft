@@ -15,6 +15,8 @@ public interface InternService {
 
     void saveOrUpdate(Intern intern) throws SQLException;
 
+    int countInDatabase() throws SQLException;
+
     Intern getByID(String idCandidate) throws SQLException;
 
     Intern getByName(String candidateName) throws SQLException;

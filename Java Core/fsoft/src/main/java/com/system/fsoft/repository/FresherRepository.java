@@ -14,6 +14,8 @@ public interface FresherRepository {
 
     void saveOrUpdate(Fresher fresher) throws SQLException;
 
+    int countInDatabase() throws SQLException;
+
     Fresher getByID(String idCandidate) throws SQLException;
 
     Fresher getByName(String candidateName) throws SQLException;

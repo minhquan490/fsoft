@@ -10,7 +10,6 @@ public class Candidate implements Serializable {
     private String phone;
     private String email;
     private int candidateType;
-    private int candidateCount;
 
     public Candidate() {
     }
@@ -61,14 +60,6 @@ public class Candidate implements Serializable {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    public int getCandidateCount() {
-        return candidateCount;
-    }
-
-    public void setCandidateCount(int candidateCount) {
-        this.candidateCount = candidateCount;
     }
 
     public int getCandidateType() {

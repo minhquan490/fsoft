@@ -1,0 +1,59 @@
+package com.system.fsoft.controller;
+
+import java.sql.SQLException;
+import java.util.Set;
+
+import com.system.fsoft.entity.Fresher;
+import com.system.fsoft.service.FresherService;
+import com.system.fsoft.service.impl.FresherServiceImpl;
+
+public class FresherController {
+
+    private String patternID = "FRS-";
+    private Set<Fresher> freshers;
+    private FresherService service = new FresherServiceImpl();
+    private Fresher fresher;
+
+    private FresherController(Set<Fresher> freshers) {
+        this.freshers = freshers;
+    }
+
+    private FresherController(Fresher fresher) {
+        this.fresher = fresher;
+    }
+
+    public static FresherController init(Set<Fresher> freshers) {
+        return new FresherController(freshers);
+    }
+
+    public static FresherController init(Fresher fresher) {
+        return new FresherController(fresher);
+    }
+
+    public void saveAll() throws SQLException {
+        int totalFresher = service.countInDatabase();
+        if (totalFresher == 0) {
+            throw new SQLException("Why it equal 0 ?");
+        }
+        if (this.freshers == null) {
+            System.out.println("Why it null ?");
+        }
+        for (Fresher fresher : freshers) {
+            fresher.setCandidateID(this.patternID + String.valueOf(totalFresher));
+            service.save(fresher);
+            totalFresher++;
+        }
+    }
+
+    public void save() throws SQLException {
+        int totalFresher = service.countInDatabase();
+        if (totalFresher == 0) {
+            throw new SQLException("Why it equal 0 ?");
+        }
+        if (this.fresher == null) {
+            System.out.println("Why it null ?");
+        }
+        fresher.setCandidateID(this.patternID + String.valueOf(totalFresher));
+        service.save(fresher);
+    }
+}

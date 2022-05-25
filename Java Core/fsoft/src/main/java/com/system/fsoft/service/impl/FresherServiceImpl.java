@@ -84,4 +84,8 @@ public class FresherServiceImpl implements FresherService {
         return repository.getFreshersByUniversity(universityName);
     }
 
+    @Override
+    public int countInDatabase() throws SQLException {
+        return repository.countInDatabase();
+    }
 }

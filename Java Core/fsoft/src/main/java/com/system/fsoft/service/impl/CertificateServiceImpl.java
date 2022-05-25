@@ -23,7 +23,6 @@ public class CertificateServiceImpl implements CertificateService {
         oldCertificate.setCertificatedName(certificate.getCertificatedName());
         oldCertificate.setCertificatedRank(certificate.getCertificatedRank());
         oldCertificate.setCertificatedDate(certificate.getCertificatedDate());
-        oldCertificate.setCandidate(certificate.getCandidate());
         repository.saveOrUpdate(certificate);
     }
 

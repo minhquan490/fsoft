@@ -37,6 +37,7 @@ public class FresherRepositoryImpl implements FresherRepository {
     private static final String SELECT_ALL = "SELECT * FROM Candidate c FULL JOIN Fresher e ON c.Candidate_ID = e.Candidate_ID ORDER BY c.Full_Name";
     private static final String SELECT_BY_RANK = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Graduation_Date, e.Graduation_Rank, e.Education FROM Candidate c LEFT JOIN Fresher e WHERE e.Graduation_Rank = ? ORDER BY c.Full_Name";
     private static final String SELECT_BY_UNIVERSITY = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Graduation_Date, e.Graduation_Rank, e.Education FROM Candidate c LEFT JOIN Fresher e WHERE e.Education = ? ORDER BY c.Full_Name";
+    private static final String COUNT_QUERY = "SELECT Count(i.Candidate_ID) AS Total FROM Fresher i GROUP BY i.Candidate_ID";
 
     @Override
     public void save(Fresher fresher) throws SQLException {
@@ -306,6 +307,28 @@ public class FresherRepositoryImpl implements FresherRepository {
         } catch (Exception e) {
             System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             return null;
+        } finally {
+            if (connection != null) {
+                resultSet.close();
+                statement.close();
+                connection.commit();
+            }
+        }
+    }
+
+    @Override
+    public int countInDatabase() throws SQLException {
+        try {
+            int count = 0;
+            connection = DatabaseConfig.getConnection();
+            statement = connection.prepareStatement(COUNT_QUERY);
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                count = resultSet.getInt("Total");
+            }
+            return count;
+        } catch (Exception e) {
+            return 0;
         } finally {
             if (connection != null) {
                 resultSet.close();

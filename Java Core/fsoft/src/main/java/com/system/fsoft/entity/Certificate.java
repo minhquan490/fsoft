@@ -13,6 +13,10 @@ public class Certificate implements Serializable {
     public Certificate() {
     }
 
+    public Certificate(Candidate candidate) {
+        this.candidate = candidate;
+    }
+
     public Date getCertificatedDate() {
         return certificatedDate;
     }
@@ -43,14 +47,6 @@ public class Certificate implements Serializable {
 
     public void setCertificatedRank(String certificatedRank) {
         this.certificatedRank = certificatedRank;
-    }
-
-    public void setCandidate(Candidate candidate) {
-        this.candidate = candidate;
-    }
-
-    public Candidate getCandidate() {
-        return candidate;
     }
 
     public String getCandidateID() {

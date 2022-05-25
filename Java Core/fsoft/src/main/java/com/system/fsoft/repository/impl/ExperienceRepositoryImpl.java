@@ -37,6 +37,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
     private static final String SELECT_ALL = "SELECT * FROM Candidate c FULL JOIN Experience e ON c.Candidate_ID = e.Candidate_ID ORDER BY c.Full_Name";
     private static final String SELECT_BY_EXP = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Pro_Skill FROM Candidate c LEFT JOIN Experience e WHERE e.Exp_In_Year = ? ORDER BY c.Full_Name";
     private static final String SELECT_BY_SKILL = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Exp_In_Year FROM Candidate c LEFT JOIN Experience e WHERE e.Pro_Skill = ? ORDER BY c.Full_Name";
+    private static final String COUNT_QUERY = "SELECT Count(i.Candidate_ID) AS Total FROM Experience i GROUP BY i.Candidate_ID";
 
     public ExperienceRepositoryImpl() {
     }
@@ -302,6 +303,28 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
         } catch (Exception e) {
             System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
             return null;
+        } finally {
+            if (connection != null) {
+                resultSet.close();
+                statement.close();
+                connection.commit();
+            }
+        }
+    }
+
+    @Override
+    public int countInDatabase() throws SQLException {
+        try {
+            int count = 0;
+            connection = DatabaseConfig.getConnection();
+            statement = connection.prepareStatement(COUNT_QUERY);
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                count = resultSet.getInt("Total");
+            }
+            return count;
+        } catch (Exception e) {
+            return 0;
         } finally {
             if (connection != null) {
                 resultSet.close();

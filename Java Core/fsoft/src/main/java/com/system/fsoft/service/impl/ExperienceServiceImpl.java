@@ -81,4 +81,9 @@ public class ExperienceServiceImpl implements ExperienceService {
     public List<Experience> getByAdvancedSkills(int proSkill) throws SQLException {
         return repository.getByAdvancedSkills(proSkill);
     }
+
+    @Override
+    public int countInDatabase() throws SQLException {
+        return repository.countInDatabase();
+    }
 }
