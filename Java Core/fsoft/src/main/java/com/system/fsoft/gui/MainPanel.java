@@ -2,7 +2,9 @@ package com.system.fsoft.gui;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
@@ -45,6 +47,9 @@ public class MainPanel {
                             InternController internController = InternController.init(this.addIntern());
                             internController.save();
                         }
+                        if (userChoiceAddIntern == 3) {
+                            this.showMenuAdd();
+                        }
                         break;
                     case 2:
                         int userChoiceAddFresher = this.addFresherMenu();
@@ -59,6 +64,9 @@ public class MainPanel {
                                     "Warning: Check infomation of Candidate who you will input. Regulatory compliance or take more time to finish work");
                             FresherController fresherController = FresherController.init(this.addFresher());
                             fresherController.save();
+                        }
+                        if (userChoiceAddFresher == 3) {
+                            this.showMenuAdd();
                         }
                         break;
                     case 3:
@@ -75,6 +83,9 @@ public class MainPanel {
                                     "Warning: Check infomation of Candidate who you will input. Regulatory compliance or take more time to finish work");
                             ExperienceController experienceController = ExperienceController.init(this.addExperience());
                             experienceController.save();
+                        }
+                        if (userChoiceAddExperience == 3) {
+                            this.showMenuAdd();
                         }
                     case 4:
                         this.showMainMenu();
@@ -99,24 +110,363 @@ public class MainPanel {
                 }
                 break;
             case 2:
-                this.showMenuFind();
-
+                int choiceFind = this.showMenuFind();
+                StringBuilder optionFind = new StringBuilder("find");
+                switch (choiceFind) {
+                    case 1:
+                        int choiceFindIntern = this.findInternMenu();
+                        if (choiceFindIntern == 1) {
+                            InternController internController = InternController.init();
+                            System.out.println("Input intern's name: ");
+                            Intern intern = internController.getInternByName(in.nextLine().trim());
+                            if (intern == null) {
+                                System.out.println("Intern doesn't exist");
+                            } else {
+                                this.showInterns((Intern[]) Arrays.asList(intern).toArray(), optionFind.toString());
+                            }
+                        }
+                        if (choiceFindIntern == 2) {
+                            InternController internController = InternController.init();
+                            System.out.println("Enter intern's major: ");
+                            List<Intern> interns = internController.getInternsByMajor(in.nextLine());
+                            if (interns.isEmpty()) {
+                                System.out.println("No intern found");
+                            } else {
+                                this.showInterns((Intern[]) interns.toArray(), optionFind.toString());
+                            }
+                        }
+                        if (choiceFindIntern == 3) {
+                            InternController internController = InternController.init();
+                            System.out.println("Enter intern's university name");
+                            List<Intern> interns = internController.getInternsByUniversity(in.nextLine());
+                            if (interns.isEmpty()) {
+                                System.out.println("No intern found");
+                            } else {
+                                this.showInterns((Intern[]) interns.toArray(), optionFind.toString());
+                            }
+                        }
+                        if (choiceFindIntern == 4) {
+                            this.showMenuFind();
+                        }
+                        break;
+                    case 2:
+                        int choiceFindFresher = this.findFresherMenu();
+                        if (choiceFindFresher == 1) {
+                            FresherController fresherController = FresherController.init();
+                            System.out.println("Enter fresher's name: ");
+                            Fresher fresher = fresherController.getFresherByName(in.nextLine().trim());
+                            if (fresher == null) {
+                                System.out.println("Fresher doesn't exit");
+                            } else {
+                                this.showFreshers((Fresher[]) Arrays.asList(fresher).toArray(), optionFind.toString());
+                            }
+                        }
+                        if (choiceFindFresher == 2) {
+                            FresherController fresherController = FresherController.init();
+                            System.out.println("Enter fresher's rank to find: ");
+                            List<Fresher> freshers = fresherController
+                                    .getFreshersByRank(in.nextLine().trim());
+                            if (freshers.isEmpty()) {
+                                System.out.println("No fresher found");
+                            } else {
+                                this.showFreshers((Fresher[]) freshers.toArray(), optionFind.toString());
+                            }
+                        }
+                        if (choiceFindFresher == 3) {
+                            FresherController fresherController = FresherController.init();
+                            System.out.println("Enter fresher's university: ");
+                            List<Fresher> freshers = fresherController
+                                    .getFreshersByRank(in.nextLine().trim());
+                            if (freshers.isEmpty()) {
+                                System.out.println("No fresher have university:  " + in.nextLine());
+                            } else {
+                                this.showFreshers((Fresher[]) freshers.toArray(), optionFind.toString());
+                            }
+                        }
+                        if (choiceFindFresher == 4) {
+                            this.showMenuFind();
+                        }
+                        break;
+                    case 3:
+                        int choiceFindExperience = this.findExperienceMenu();
+                        if (choiceFindExperience == 1) {
+                            ExperienceController experienceController = ExperienceController.init();
+                            System.out.println("Enter experience's name: ");
+                            Experience experience = experienceController.getExperienceByName(in.nextLine().trim());
+                            if (experience == null) {
+                                System.out.println("Experience doesn't exit: ");
+                            } else {
+                                this.showExperiences((Experience[]) Arrays.asList(experience).toArray(),
+                                        optionFind.toString());
+                            }
+                        }
+                        if (choiceFindExperience == 2) {
+                            ExperienceController experienceController = ExperienceController.init();
+                            System.out.println("Enter exp in year to show experiences: ");
+                            List<Experience> experiences = experienceController
+                                    .getByExperience(Float.valueOf(in.nextLine().trim()));
+                            if (experiences.isEmpty()) {
+                                System.out.println("No candidate has year in work it you input");
+                            } else {
+                                this.showExperiences((Experience[]) experiences.toArray(), optionFind.toString());
+                            }
+                        }
+                        if (choiceFindExperience == 3) {
+                            ExperienceController experienceController = ExperienceController.init();
+                            System.out.println("Enter advance skill to show experiences: ");
+                            List<Experience> experiences = experienceController
+                                    .getBySkill(Integer.valueOf(in.nextLine().trim()));
+                            if (experiences.isEmpty()) {
+                                System.out.println("No candidate has year in work it you input");
+                            } else {
+                                this.showExperiences((Experience[]) experiences.toArray(), optionFind.toString());
+                            }
+                        }
+                        if (choiceFindExperience == 4) {
+                            this.showMenuFind();
+                        }
+                        break;
+                    case 4:
+                        this.showMainMenu();
+                        break;
+                    case 5:
+                        this.showMenuAdd();
+                        break;
+                    case 6:
+                        this.showMenuDelete();
+                        break;
+                    case 7:
+                        this.showMenuEdit();
+                        break;
+                    case 8:
+                        this.showAllCandidate();
+                        break;
+                    case 9:
+                        return;
+                    default:
+                        System.out.println("Input 1-9");
+                        break;
+                }
                 break;
             case 3:
-                this.showMenuEdit();
-                // TODO
+                int choiceEdit = this.showMenuEdit();
+                StringBuilder optionEdit = new StringBuilder("edit");
+                switch (choiceEdit) {
+                    case 1:
+                        InternController internController = InternController.init();
+                        Intern[] interns = (Intern[]) internController.getAll().toArray();
+                        this.showInterns(interns, optionEdit.toString());
+                        System.out.println("Enter candidate to edit using column Serial");
+                        internController.edit(this.editIntern(interns[Integer.valueOf(in.nextLine().trim()) - 1]));
+                        break;
+                    case 2:
+                        FresherController fresherController = FresherController.init();
+                        Fresher[] freshers = (Fresher[]) fresherController.getAll().toArray();
+                        this.showFreshers(freshers, optionEdit.toString());
+                        System.out.println("Enter candidate to edit using column Serial");
+                        fresherController.edit(this.editFresher(freshers[Integer.valueOf(in.nextLine().trim())]));
+                        break;
+                    case 3:
+                        ExperienceController experienceController = ExperienceController.init();
+                        Experience[] experiences = (Experience[]) experienceController.getAll().toArray();
+                        this.showExperiences(experiences, optionEdit.toString());
+                        System.out.println("Enter candidate to edit using column Serial");
+                        experienceController
+                                .edit(this.editExperience(experiences[Integer.valueOf(in.nextLine().trim())]));
+                        break;
+                    case 4:
+                        this.showMainMenu();
+                        break;
+                    case 5:
+                        this.showMenuFind();
+                        break;
+                    case 6:
+                        this.showMenuAdd();
+                        break;
+                    case 7:
+                        this.showMenuDelete();
+                        break;
+                    case 8:
+                        this.showAllCandidate();
+                        break;
+                    case 9:
+                        return;
+                    default:
+                        System.out.println("Input 1-9");
+                        break;
+                }
                 break;
             case 4:
-                this.showMenuDelete();
-                // TODO
+                StringBuilder optionDelete = new StringBuilder("delete");
+                int choiceDelete = this.showMenuDelete();
+                switch (choiceDelete) {
+                    case 1:
+                        InternController internController = InternController.init();
+                        Intern[] interns = (Intern[]) internController.getAll().toArray();
+                        this.showInterns(interns, optionDelete.toString());
+                        System.out.println("Enter candidate to delete using column Serial");
+                        internController.delete(interns[Integer.valueOf(in.nextLine().trim()) - 1]);
+                        break;
+                    case 2:
+                        FresherController fresherController = FresherController.init();
+                        Fresher[] freshers = (Fresher[]) fresherController.getAll().toArray();
+                        this.showFreshers(freshers, optionDelete.toString());
+                        System.out.println("Enter candidate to delete using column Serial");
+                        fresherController.delete(freshers[Integer.valueOf(in.nextLine().trim()) - 1]);
+                        break;
+                    case 3:
+                        ExperienceController experienceController = ExperienceController.init();
+                        Experience[] experiences = (Experience[]) experienceController.getAll().toArray();
+                        this.showExperiences(experiences, optionDelete.toString());
+                        System.out.println("Enter candidate to delete using column Serial");
+                        experienceController.delete(experiences[Integer.valueOf(in.nextLine().trim()) - 1]);
+                        break;
+                    case 4:
+                        this.showMainMenu();
+                        break;
+                    case 5:
+                        this.showMenuFind();
+                        break;
+                    case 6:
+                        this.showMenuAdd();
+                        break;
+                    case 7:
+                        this.showMenuEdit();
+                        break;
+                    case 8:
+                        this.showAllCandidate();
+                        break;
+                    default:
+                        System.out.println("Input 1-8");
+                        break;
+                }
                 break;
             case 5:
-                this.showAllCandidate();
-                // TODO
+                int choiceAllCandidate = this.showAllCandidate();
+                StringBuilder optionList = new StringBuilder("list");
+                switch (choiceAllCandidate) {
+                    case 1:
+                        InternController internController = InternController.init();
+                        List<Intern> interns = internController.getAll();
+                        System.out.println("All intern:");
+                        this.showInterns((Intern[]) interns.toArray(), optionList.toString());
+                        break;
+                    case 2:
+                        FresherController fresherController = FresherController.init();
+                        List<Fresher> freshers = fresherController.getAll();
+                        System.out.println("All fresher: ");
+                        this.showFreshers((Fresher[]) freshers.toArray(), optionList.toString());
+                        break;
+                    case 3:
+                        ExperienceController experienceController = ExperienceController.init();
+                        List<Experience> experiences = experienceController.getAll();
+                        System.out.println("All experience: ");
+                        this.showExperiences((Experience[]) experiences.toArray(), optionList.toString());
+                        break;
+                    case 4:
+                        this.showMainMenu();
+                        break;
+                    case 5:
+                        this.showMenuFind();
+                        break;
+                    case 6:
+                        this.showMenuAdd();
+                        break;
+                    case 7:
+                        this.showMenuDelete();
+                        break;
+                    case 8:
+                        this.showMenuEdit();
+                        break;
+                    default:
+                        System.out.println("Input 1-8");
+                        break;
+                }
                 break;
+            case 6:
+                return;
             default:
                 System.out.println("Try again please");
                 break;
+        }
+    }
+
+    private void showExperiences(Experience[] experiences, String option) {
+        System.out.println(
+                "Full Name    | Birth Day    | Phone    | Email    | Exp in year   | Advance skill    | Serial    ");
+        for (int i = 0; i < experiences.length; i++) {
+            System.out.println(experiences[i].getFullName() + "    | " + experiences[i].getBirthDate() + "    | "
+                    + experiences[i].getPhone() + "    | " + experiences[i].getEmail() + "    | "
+                    + experiences[i].getExpInYear()
+                    + "    | " + experiences[i].getProSkill() + "    | " + (i + 1));
+        }
+        System.out.println();
+        System.out.println();
+        System.out.println("Press any key and enter to exit to find center....");
+        if (in.nextLine() != null && option.equals("find")) {
+            this.showMenuFind();
+        }
+        if (in.nextLine() != null && option.equals("edit")) {
+            this.showMenuEdit();
+        }
+        if (in.nextLine() != null && option.equals("delete")) {
+            this.showMenuDelete();
+        }
+        if (in.nextLine() != null && option.equals("list")) {
+            this.showAllCandidate();
+        }
+    }
+
+    private void showFreshers(Fresher[] freshers, String option) {
+        System.out.println(
+                "Full Name    | Birth Day    | Phone    | Email    | Graduation Day    | Graduation Rank    | University    | Serial    ");
+        for (int i = 0; i < freshers.length; i++) {
+            System.out.println(freshers[i].getFullName() + "    | " + freshers[i].getBirthDate() + "    | "
+                    + freshers[i].getPhone() + "    | " + freshers[i].getEmail() + "    | "
+                    + freshers[i].getGraduationDate().toString()
+                    + "    | " + freshers[i].getGraduationRank() + "    | " + freshers[i].getEducation() + "    | "
+                    + (i + 1));
+        }
+        System.out.println();
+        System.out.println();
+        System.out.println("Press any key and enter to exit to find center....");
+        if (in.nextLine() != null && option.equals("find")) {
+            this.showMenuFind();
+        }
+        if (in.nextLine() != null && option.equals("edit")) {
+            this.showMenuEdit();
+        }
+        if (in.nextLine() != null && option.equals("delete")) {
+            this.showMenuDelete();
+        }
+        if (in.nextLine() != null && option.equals("list")) {
+            this.showAllCandidate();
+        }
+    }
+
+    private void showInterns(Intern[] interns, String option) {
+        System.out.println(
+                "Full Name    | Birth Day    | Phone    | Email    | Major    | Semester    | University    | Serial    ");
+        for (int i = 0; i < interns.length; i++) {
+            System.out.println(interns[i].getFullName() + "    | " + interns[i].getBirthDate() + "    | "
+                    + interns[i].getPhone() + "    | " + interns[i].getEmail() + "    | " + interns[i].getMajor()
+                    + "    | " + interns[i].getSemester() + "    | " + interns[i].getUniversityName() + "    | "
+                    + (i + 1));
+        }
+        System.out.println();
+        System.out.println();
+        System.out.println("Press any key and enter to exit to find center....");
+        if (in.nextLine() != null && option.equals("find")) {
+            this.showMenuFind();
+        }
+        if (in.nextLine() != null && option.equals("edit")) {
+            this.showMenuEdit();
+        }
+        if (in.nextLine() != null && option.equals("delete")) {
+            this.showMenuDelete();
+        }
+        if (in.nextLine() != null && option.equals("list")) {
+            this.showAllCandidate();
         }
     }
 
@@ -159,28 +509,38 @@ public class MainPanel {
     }
 
     private int addInternMenu() {
-        System.out
-                .println("You can add intern with two ways (add list intern or only one intern). What do you choice ?");
-        System.out.println(" 1. Add intern with list. ");
-        System.out.println(" 2. Add only one intern. ");
-        int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 2) {
-            System.out.println("Please try again");
+        while (true) {
+            System.out
+                    .println(
+                            "You can add intern with two ways (add list intern or only one intern). What do you choice ?");
+            System.out.println(" 1. Add intern with list. ");
+            System.out.println(" 2. Add only one intern. ");
+            System.out.println(" 3. Exit");
+            int choice = Validator.checkInputInt(in.nextLine().trim());
+            if (choice < 1 && choice > 3) {
+                System.out.println("Please try again");
+            } else {
+                return choice;
+            }
+
         }
-        return choice;
     }
 
     private int addFresherMenu() {
-        System.out
-                .println(
-                        "You can add fresher with two ways (add list fresher or only one fresher). What do you choice ?");
-        System.out.println(" 1. Add fresher with list. ");
-        System.out.println(" 2. Add only one fresher. ");
-        int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 2) {
-            System.out.println("Please try again");
+        while (true) {
+            System.out
+                    .println(
+                            "You can add fresher with two ways (add list fresher or only one fresher). What do you choice ?");
+            System.out.println(" 1. Add fresher with list. ");
+            System.out.println(" 2. Add only one fresher. ");
+            System.out.println(" 3. Exit");
+            int choice = Validator.checkInputInt(in.nextLine().trim());
+            if (choice < 1 && choice > 3) {
+                System.out.println("Please try again");
+            } else {
+                return choice;
+            }
         }
-        return choice;
     }
 
     private int addExperienceMenu() {
@@ -211,6 +571,48 @@ public class MainPanel {
         System.out.println("------------------------------");
         int choice = Validator.checkInputInt(in.nextLine().trim());
         if (choice < 1 && choice > 9) {
+            System.out.println("Please try again");
+        }
+        return choice;
+    }
+
+    private int findInternMenu() {
+        System.out.println("   FIND INTERN   ");
+        System.out.println("-----------------");
+        System.out.println("1. Find by name");
+        System.out.println("2. Find by major");
+        System.out.println("3. Find by university");
+        System.out.println("4. Exit");
+        int choice = Validator.checkInputInt(in.nextLine().trim());
+        if (choice < 1 && choice > 4) {
+            System.out.println("Please try again");
+        }
+        return choice;
+    }
+
+    private int findFresherMenu() {
+        System.out.println("   FIND FRESHER   ");
+        System.out.println("-----------------");
+        System.out.println("1. Find by name");
+        System.out.println("2. Find by rank");
+        System.out.println("3. Find by university");
+        System.out.println("4. Exit");
+        int choice = Validator.checkInputInt(in.nextLine().trim());
+        if (choice < 1 && choice > 4) {
+            System.out.println("Please try again");
+        }
+        return choice;
+    }
+
+    private int findExperienceMenu() {
+        System.out.println("   FIND EXPERIENCE   ");
+        System.out.println("-----------------");
+        System.out.println("1. Find by name");
+        System.out.println("2. Find by experience in year");
+        System.out.println("3. Find by advance skill");
+        System.out.println("4. Exit");
+        int choice = Validator.checkInputInt(in.nextLine().trim());
+        if (choice < 1 && choice > 4) {
             System.out.println("Please try again");
         }
         return choice;
@@ -274,6 +676,79 @@ public class MainPanel {
             System.out.println("Please try again");
         }
         return choice;
+    }
+
+    private Experience editExperience(Experience experience) {
+        String[] now = LocalDate.now().toString().split("-");
+        System.out.println("If you want to skip field please press space and enter");
+        while (true) {
+            System.out.println("Input Experience's full name: ");
+            experience.setFullName(in.nextLine().trim());
+            System.out.println(
+                    "Input Experience's birth day (year must be > 1900 and <" + " " + now[0]
+                            + "). Pattern: yyyy-MM-dd");
+            experience.setBirthDate(Validator.checkInvalidDate(in.nextLine().trim()));
+            System.out.println("Input experience's phone (10 digits): ");
+            experience.setPhone(Validator.checkPhone(in.nextLine().trim()));
+            System.out.println("Input experience's email (must be has @fsoft.com.vn)");
+            experience.setEmail(Validator.checkInvalidEmail(in.nextLine()));
+            System.out.println("Input exp in year: ");
+            experience.setExpInYear(Integer.valueOf(in.nextLine().trim()));
+            System.out.println("Input advanced skill: ");
+            experience.setProSkill(Integer.valueOf(in.nextLine().trim()));
+            return experience;
+        }
+    }
+
+    private Fresher editFresher(Fresher fresher) {
+        String[] now = LocalDate.now().toString().split("-");
+        System.out.println("If you want to skip field please press space and enter");
+        while (true) {
+            System.out.println("Input fresher's full name: ");
+            fresher.setFullName(in.nextLine().trim());
+            System.out.println(
+                    "Input fresher's birth day (year must be > 1900 and <" + " " + now[0] + "). Pattern: yyyy-MM-dd");
+            fresher.setBirthDate(Validator.checkInvalidDate(in.nextLine().trim()));
+            System.out.println("Input fresher's phone (10 digits): ");
+            fresher.setPhone(Validator.checkPhone(in.nextLine().trim()));
+            System.out.println("Input fresher's email (must be has @fsoft.com.vn)");
+            fresher.setEmail(Validator.checkInvalidEmail(in.nextLine()));
+            System.out.println("Input Graduation Day: ");
+            fresher.setGraduationDate(Validator.checkInvalidDate(in.nextLine().trim()));
+            System.out.println("Input Graduation Rank: ");
+            fresher.setGraduationRank(Validator.checkGraduationRank(in.nextLine().trim()));
+            System.out.println("Input fresher's university name");
+            fresher.setEducation(in.nextLine().trim());
+            return fresher;
+        }
+    }
+
+    private Intern editIntern(Intern intern) {
+        String[] now = LocalDate.now().toString().split("-");
+        System.out.println("If you want to skip field please press space and enter");
+        while (true) {
+            System.out.println("Input intern's full name (press space and enter to skip): ");
+            intern.setFullName(in.nextLine().trim().isEmpty() ? in.nextLine().trim() : intern.getFullName());
+            System.out.println(
+                    "Input intern's birth day (year must be > 1900 and <" + " " + now[0] + "). Pattern: yyyy-MM-dd");
+            intern.setBirthDate(Validator.checkInvalidDate(
+                    in.nextLine().trim().isEmpty() ? in.nextLine().trim() : intern.getBirthDate().toString()));
+            System.out.println("Input intern's phone (10 digits): ");
+            intern.setPhone(
+                    Validator.checkPhone(in.nextLine().trim().isEmpty() ? in.nextLine().trim() : intern.getPhone()));
+            System.out.println("Input intern's email (must be has @fsoft.com.vn)");
+            intern.setEmail(Validator
+                    .checkInvalidEmail(in.nextLine().trim().isEmpty() ? in.nextLine().trim() : intern.getEmail()));
+            System.out.println("Input intern's major (Do not input white space): ");
+            intern.setMajor(in.nextLine().trim().isEmpty() ? in.nextLine().trim() : intern.getMajor());
+            System.out.println("Input semester (Do not input white space): ");
+            intern.setSemester(Integer.valueOf(
+                    in.nextLine().trim().isEmpty() ? in.nextLine().trim() : String.valueOf(intern.getSemester())));
+            System.out.println("Input intern's university name: ");
+            intern.setUniversityName(
+                    in.nextLine().trim().isEmpty() ? in.nextLine().trim() : intern.getUniversityName());
+            return intern;
+        }
     }
 
     private Set<Intern> addListIntern() {

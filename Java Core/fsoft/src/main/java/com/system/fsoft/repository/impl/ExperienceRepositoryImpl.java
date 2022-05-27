@@ -50,7 +50,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             candidateRepository.run();
             statement = connection.prepareStatement(INSERT_QUERY);
             statement.setString(1, experience.getCandidateID());
-            statement.setInt(2, experience.getExpInYear());
+            statement.setFloat(2, experience.getExpInYear());
             statement.setInt(3, experience.getProSkill());
             Thread.sleep(200);
             statement.executeUpdate();
@@ -73,7 +73,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
                 connection = DatabaseConfig.getConnection();
                 statement = connection.prepareStatement(UPDATE_QUERY);
                 candidateRepository.run();
-                statement.setInt(1, experience.getExpInYear());
+                statement.setFloat(1, experience.getExpInYear());
                 statement.setInt(2, experience.getProSkill());
                 statement.setString(3, experience.getCandidateID());
                 Thread.sleep(200);
@@ -102,7 +102,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
                 candidateRepository.run();
                 statement.setString(1, experience.getCandidateID());
                 resultSet = statement.executeQuery();
-                resultSet.updateInt(2, experience.getExpInYear());
+                resultSet.updateFloat(2, experience.getExpInYear());
                 resultSet.updateInt(3, experience.getProSkill());
                 Thread.sleep(200);
                 resultSet.updateRow();
@@ -118,7 +118,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
                 resultSet = statement.executeQuery();
                 resultSet.moveToInsertRow();
                 statement.setString(1, experience.getCandidateID());
-                resultSet.updateInt(2, experience.getExpInYear());
+                resultSet.updateFloat(2, experience.getExpInYear());
                 resultSet.updateInt(3, experience.getProSkill());
                 Thread.sleep(200);
                 resultSet.insertRow();
@@ -170,7 +170,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             experience.setPhone(resultSet.getString("Phone"));
             experience.setEmail(resultSet.getString("Email"));
             experience.setCandidateType(resultSet.getInt("Candidate_Type"));
-            experience.setExpInYear(resultSet.getInt("Exp_In_Year"));
+            experience.setExpInYear(resultSet.getFloat("Exp_In_Year"));
             experience.setProSkill(resultSet.getInt("Pro_Skill"));
             return experience;
         } catch (Exception e) {
@@ -199,7 +199,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
             experience.setPhone(resultSet.getString("Phone"));
             experience.setEmail(resultSet.getString("Email"));
             experience.setCandidateType(resultSet.getInt("Candidate_Type"));
-            experience.setExpInYear(resultSet.getInt("Exp_In_Year"));
+            experience.setExpInYear(resultSet.getFloat("Exp_In_Year"));
             experience.setProSkill(resultSet.getInt("Pro_Skill"));
             return experience;
         } catch (Exception e) {
@@ -229,7 +229,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
                 experience.setPhone(resultSet.getString("Phone"));
                 experience.setEmail(resultSet.getString("Email"));
                 experience.setCandidateType(resultSet.getInt("Candidate_Type"));
-                experience.setExpInYear(resultSet.getInt("Exp_In_Year"));
+                experience.setExpInYear(resultSet.getFloat("Exp_In_Year"));
                 experience.setProSkill(resultSet.getInt("Pro_Skill"));
                 experiences.add(experience);
             }
@@ -247,12 +247,12 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
     }
 
     @Override
-    public List<Experience> getByExperience(int expInYear) throws SQLException {
+    public List<Experience> getByExperience(float expInYear) throws SQLException {
         List<Experience> experiences = new ArrayList<>();
         try {
             connection = DatabaseConfig.getConnection();
             statement = connection.prepareStatement(SELECT_BY_EXP);
-            statement.setInt(1, expInYear);
+            statement.setFloat(1, expInYear);
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Experience experience = new Experience();
@@ -262,7 +262,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
                 experience.setPhone(resultSet.getString("Phone"));
                 experience.setEmail(resultSet.getString("Email"));
                 experience.setCandidateType(resultSet.getInt("Candidate_Type"));
-                experience.setExpInYear(resultSet.getInt("Exp_In_Year"));
+                experience.setExpInYear(resultSet.getFloat("Exp_In_Year"));
                 experience.setProSkill(resultSet.getInt("Pro_Skill"));
                 experiences.add(experience);
             }
@@ -295,7 +295,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
                 experience.setPhone(resultSet.getString("Phone"));
                 experience.setEmail(resultSet.getString("Email"));
                 experience.setCandidateType(resultSet.getInt("Candidate_Type"));
-                experience.setExpInYear(resultSet.getInt("Exp_In_Year"));
+                experience.setExpInYear(resultSet.getFloat("Exp_In_Year"));
                 experience.setProSkill(resultSet.getInt("Pro_Skill"));
                 experiences.add(experience);
             }

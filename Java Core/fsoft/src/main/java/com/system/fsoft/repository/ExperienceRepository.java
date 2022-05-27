@@ -22,7 +22,7 @@ public interface ExperienceRepository {
 
     List<Experience> getAll() throws SQLException;
 
-    List<Experience> getByExperience(int expInYear) throws SQLException;
+    List<Experience> getByExperience(float expInYear) throws SQLException;
 
     List<Experience> getByAdvancedSkills(int proSkill) throws SQLException;
 }

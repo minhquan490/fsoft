@@ -1,6 +1,7 @@
 package com.system.fsoft.controller;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 
 import com.system.fsoft.entity.Fresher;
@@ -20,6 +21,13 @@ public class FresherController {
 
     private FresherController(Fresher fresher) {
         this.fresher = fresher;
+    }
+
+    private FresherController() {
+    }
+
+    public static FresherController init() {
+        return new FresherController();
     }
 
     public static FresherController init(Set<Fresher> freshers) {
@@ -55,5 +63,29 @@ public class FresherController {
         }
         fresher.setCandidateID(this.patternID + String.valueOf(totalFresher));
         service.save(fresher);
+    }
+
+    public Fresher getFresherByName(String fresherName) throws SQLException {
+        return service.getByName(fresherName);
+    }
+
+    public void edit(Fresher fresher) throws SQLException {
+        service.edit(fresher);
+    }
+
+    public void delete(Fresher fresher) throws SQLException {
+        service.delete(fresher);
+    }
+
+    public List<Fresher> getFreshersByRank(String rank) throws SQLException {
+        return service.getFreshersByRank(rank);
+    }
+
+    public List<Fresher> getFreshersByUniversityName(String universityName) throws SQLException {
+        return service.getFreshersByUniversity(universityName);
+    }
+
+    public List<Fresher> getAll() throws SQLException {
+        return service.getAll();
     }
 }

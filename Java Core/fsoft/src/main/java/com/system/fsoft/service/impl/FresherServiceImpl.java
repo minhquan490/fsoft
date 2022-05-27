@@ -37,8 +37,8 @@ public class FresherServiceImpl implements FresherService {
     }
 
     @Override
-    public void delete(String candidateName) throws SQLException {
-        repository.delete(candidateName);
+    public void delete(Fresher fresher) throws SQLException {
+        repository.delete(fresher);
     }
 
     @Override

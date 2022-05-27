@@ -3,13 +3,13 @@ package com.system.fsoft.entity;
 import java.sql.Date;
 
 public class Experience extends Candidate {
-    private int expInYear;
+    private float expInYear;
     private int proSkill;
 
     public Experience() {
     }
 
-    public int getExpInYear() {
+    public float getExpInYear() {
         return expInYear;
     }
 
@@ -17,8 +17,8 @@ public class Experience extends Candidate {
         return proSkill;
     }
 
-    public void setExpInYear(int expInYear) {
-        this.expInYear = expInYear;
+    public void setExpInYear(float f) {
+        this.expInYear = f;
     }
 
     public void setProSkill(int proSkill) {

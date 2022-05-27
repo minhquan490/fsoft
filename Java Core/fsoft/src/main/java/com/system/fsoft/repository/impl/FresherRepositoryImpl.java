@@ -22,7 +22,7 @@ public class FresherRepositoryImpl implements FresherRepository {
     private static final String INSERT_QUERY = "INSERT INTO Fresher(Candidate_ID, Graduation_Date, Graduation_Rank, Education) VALUES (?,?,?,?)";
     private static final String INSERT_CANDIDATE = "INSERT INTO Candidate(Candidate_ID, Full_Name, Birth_Day, Phone, Email, Candidate_Type) VALUES (?,?,?,?,?,?)";
 
-    private static final String DELETE_QUERY = "DELETE FROM Candidate c WHERE c.Full_Name = ?";
+    private static final String DELETE_QUERY = "DELETE FROM Candidate c WHERE c.Candidate_ID = ?";
 
     private static final String UPDATE_QUERY = "UPDATE Fresher SET Graduation_Date = ?, Graduation_Rank = ?, Education = ? WHERE Candidate_ID = ?";
     private static final String UPDATE_CANDIDATE = "UPDATE Candidate SET Full_Name = ?, Birth_Day = ?, Phone = ?, Email = ?, Candidate_Type = ? WHERE Candidate_ID = ?";
@@ -88,12 +88,12 @@ public class FresherRepositoryImpl implements FresherRepository {
     }
 
     @Override
-    public void delete(String candidateName) throws SQLException {
-        if (this.getByName(candidateName).getFullName() != null) {
+    public void delete(Fresher fresher) throws SQLException {
+        if (this.getByName(fresher.getCandidateID()) != null) {
             try {
                 connection = DatabaseConfig.getConnection();
                 statement = connection.prepareStatement(DELETE_QUERY);
-                statement.setString(1, candidateName);
+                statement.setString(1, fresher.getCandidateID());
                 statement.executeUpdate();
             } catch (Exception e) {
                 System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");

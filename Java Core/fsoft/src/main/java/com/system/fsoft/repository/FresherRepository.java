@@ -10,7 +10,7 @@ public interface FresherRepository {
 
     void edit(Fresher fresher) throws SQLException;
 
-    void delete(String candidateName) throws SQLException;
+    void delete(Fresher fresher) throws SQLException;
 
     void saveOrUpdate(Fresher fresher) throws SQLException;
 

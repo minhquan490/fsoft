@@ -1,6 +1,7 @@
 package com.system.fsoft.controller;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 
 import com.system.fsoft.entity.Intern;
@@ -20,6 +21,13 @@ public class InternController {
 
     private InternController(Intern intern) {
         this.intern = intern;
+    }
+
+    private InternController() {
+    }
+
+    public static InternController init() {
+        return new InternController();
     }
 
     public static InternController init(Set<Intern> interns) {
@@ -55,5 +63,29 @@ public class InternController {
         }
         intern.setCandidateID(this.patternID + String.valueOf(totalIntern));
         service.save(intern);
+    }
+
+    public void edit(Intern intern) throws SQLException {
+        service.edit(intern);
+    }
+
+    public void delete(Intern intern) throws SQLException {
+        service.delete(intern);
+    }
+
+    public Intern getInternByName(String name) throws SQLException {
+        return service.getByName(name);
+    }
+
+    public List<Intern> getInternsByMajor(String majorName) throws SQLException {
+        return service.getByMajor(majorName.trim());
+    }
+
+    public List<Intern> getInternsByUniversity(String universityName) throws SQLException {
+        return service.getByUniversity(universityName);
+    }
+
+    public List<Intern> getAll() throws SQLException {
+        return service.getAll();
     }
 }

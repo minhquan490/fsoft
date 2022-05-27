@@ -1,6 +1,7 @@
 package com.system.fsoft.controller;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Set;
 
 import com.system.fsoft.entity.Experience;
@@ -19,6 +20,13 @@ public class ExperienceController {
 
     private ExperienceController(Experience experience) {
         this.experience = experience;
+    }
+
+    private ExperienceController() {
+    }
+
+    public static ExperienceController init() {
+        return new ExperienceController();
     }
 
     public static ExperienceController init(Set<Experience> Experiences) {
@@ -55,4 +63,29 @@ public class ExperienceController {
         experience.setCandidateID(this.patternID + String.valueOf(totalExperience));
         service.save(experience);
     }
+
+    public void edit(Experience experience) throws SQLException {
+        service.edit(experience);
+    }
+
+    public void delete(Experience experience) throws SQLException {
+        service.delete(experience);
+    }
+
+    public Experience getExperienceByName(String name) throws SQLException {
+        return service.getByName(name);
+    }
+
+    public List<Experience> getByExperience(Float expInYear) throws SQLException {
+        return service.getByExperience(expInYear);
+    }
+
+    public List<Experience> getBySkill(int proSkill) throws SQLException {
+        return service.getByAdvancedSkills(proSkill);
+    }
+
+    public List<Experience> getAll() throws SQLException {
+        return service.getAll();
+    }
+
 }

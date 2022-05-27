@@ -73,7 +73,7 @@ public class ExperienceServiceImpl implements ExperienceService {
     }
 
     @Override
-    public List<Experience> getByExperience(int expInYear) throws SQLException {
+    public List<Experience> getByExperience(float expInYear) throws SQLException {
         return repository.getByExperience(expInYear);
     }
 
