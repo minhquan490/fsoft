@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.system.fsoft.config.DatabaseConfig;
+import com.system.fsoft.entity.Candidate;
 import com.system.fsoft.entity.Certificate;
 import com.system.fsoft.repository.CertificateRepository;
 
@@ -103,12 +104,12 @@ public class CertificateRepositoryImpl implements CertificateRepository {
     }
 
     @Override
-    public List<Certificate> getAllCertificates(String candidateID) throws SQLException {
+    public List<Certificate> getCertificatesByCandidate(Candidate candidate) throws SQLException {
         List<Certificate> certificates = new ArrayList<>();
         try {
             connection = DatabaseConfig.getConnection();
             statement = connection.prepareStatement(SELECT_ALL_CERTIFICATES);
-            statement.setString(1, candidateID);
+            statement.setString(1, candidate.getCandidateID());
             resultSet = statement.executeQuery();
             while (resultSet.next()) {
                 Certificate certificate = new Certificate();

@@ -3,6 +3,7 @@ package com.system.fsoft.repository;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.system.fsoft.entity.Candidate;
 import com.system.fsoft.entity.Certificate;
 
 public interface CertificateRepository {
@@ -12,5 +13,5 @@ public interface CertificateRepository {
 
     Certificate get(String certificateID) throws SQLException;
 
-    List<Certificate> getAllCertificates(String candidateID) throws SQLException;
+    List<Certificate> getCertificatesByCandidate(Candidate candidate) throws SQLException;
 }

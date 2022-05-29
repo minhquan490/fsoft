@@ -52,4 +52,8 @@ public class Certificate implements Serializable {
     public String getCandidateID() {
         return candidate.getCandidateID();
     }
+
+    public void setCandidate(Candidate candidate) {
+        this.candidate = candidate;
+    }
 }

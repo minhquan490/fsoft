@@ -2,18 +2,24 @@ package com.system.fsoft.gui;
 
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
 
+import com.system.fsoft.controller.CandidateController;
+import com.system.fsoft.controller.CertificateController;
 import com.system.fsoft.controller.ExperienceController;
 import com.system.fsoft.controller.FresherController;
 import com.system.fsoft.controller.InternController;
+import com.system.fsoft.entity.Candidate;
+import com.system.fsoft.entity.Certificate;
 import com.system.fsoft.entity.Experience;
 import com.system.fsoft.entity.Fresher;
 import com.system.fsoft.entity.Intern;
+import com.system.fsoft.exception.SystemInterruptedException;
 import com.system.fsoft.utils.Validator;
 
 public class MainPanel {
@@ -384,11 +390,145 @@ public class MainPanel {
                 }
                 break;
             case 6:
+                CandidateController candidateController = CandidateController.init();
+                Candidate[] candidates = (Candidate[]) candidateController.getAllCandidateAndTheirCertidicate()
+                        .toArray();
+                this.showCandidateAndTheirCertificate(candidates);
+                this.certificateOption(candidates);
+                break;
+            case 7:
                 return;
             default:
                 System.out.println("Try again please");
                 break;
         }
+    }
+
+    private void certificateOption(Candidate[] candidates) throws SQLException {
+        CertificateController certificateController = CertificateController.init();
+        try {
+            System.out.println("1. View, modify and add certificate for candidate");
+            System.out.println("2. delete certificate");
+            System.out.println("3. Exit");
+            int choice = Integer.valueOf(in.nextLine().trim());
+            if (choice == 1) {
+                System.out.println("Index of Candidate: ");
+                int index = Integer.valueOf(in.nextLine().trim());
+                Candidate candidate = candidates[index - 1];
+                List<Certificate> certificates = certificateController.getCertificatesByCandidate(candidate);
+                this.showCertificates((Certificate[]) certificates.toArray());
+                System.out.println("Do you want insert or update ?");
+                if (in.nextLine().trim().equalsIgnoreCase("insert")) {
+                    this.certificateToSaveOrUpdate(candidate, new Certificate(), certificates);
+                }
+                if (in.nextLine().trim().equalsIgnoreCase("update")) {
+                    System.out.println("Enter index of certificate this you want to update: ");
+                    int cerIndex = Integer.valueOf(in.nextLine().trim());
+                    this.certificateToSaveOrUpdate(candidate, certificates.get(cerIndex - 1), certificates);
+                }
+                if (!in.nextLine().trim().equalsIgnoreCase("update")
+                        || !in.nextLine().trim().equalsIgnoreCase("insert")) {
+                    System.out.println("INSERT or UPDATE ?");
+                    this.certificateOption(candidates);
+                }
+            }
+            if (choice == 2) {
+                System.out.println("Index of Candidate: ");
+                int index = Integer.valueOf(in.nextLine().trim());
+                Candidate candidate = candidates[index - 1];
+                List<Certificate> certificates = certificateController.getCertificatesByCandidate(candidate);
+                this.showCertificates((Certificate[]) certificates.toArray());
+                System.out.println("Input index of certificate: ");
+                int cerIndex = Integer.valueOf(in.nextLine().trim());
+                certificateController.delete(certificates.get(cerIndex - 1));
+            }
+            if (choice == 3) {
+                this.showMainMenu();
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Input number");
+        }
+    }
+
+    private void showCertificates(Certificate[] certificates) {
+        System.out.println("| Certificate Name    | Certificate Rank     | Certificate Day    | Indexes    |");
+        for (int i = 0; i < certificates.length; i++) {
+            System.out.println(
+                    "| " + certificates[i].getCertificatedName() + "    | " + certificates[i].getCertificatedRank()
+                            + "    | " + certificates[i].getCertificatedDate().toString() + "    | " + (i + 1));
+        }
+    }
+
+    private void certificateToSaveOrUpdate(Candidate candidate, final Certificate certificate,
+            List<Certificate> certificates) throws SQLException {
+        int sizeOfCertificates;
+        if (certificates == null) {
+            certificates = new ArrayList<>();
+            sizeOfCertificates = 0;
+        } else {
+            sizeOfCertificates = certificates.size();
+        }
+        CertificateController certificateController = CertificateController.init();
+        StringBuilder option = new StringBuilder("insert");
+        if (certificate.getCandidateID() != null && !certificates.isEmpty()) {
+            certificates.forEach(ce -> {
+                try {
+                    if (ce.getCertificatedID().equals(certificate.getCandidateID())) {
+                        option.delete(0, option.length());
+                        option.append("update");
+                    }
+                } catch (Exception e) {
+                    throw new SystemInterruptedException("Something is wrong", e);
+                }
+            });
+        }
+        while (true) {
+            System.out.println("Input certificate's name (Enter to skip): ");
+            certificate.setCertificatedName(
+                    in.nextLine().trim() == null ? certificate.getCertificatedName() : in.nextLine().trim());
+            System.out.println("Input day receive certificate (Enter to skip): ");
+            certificate.setCertificatedDate(in.nextLine().trim() == null ? certificate.getCertificatedDate()
+                    : Validator.checkInvalidDate(in.nextLine().trim()));
+            System.out.println("Input certificate's rank (Enter to skip): ");
+            certificate.setCertificatedRank(
+                    in.nextLine().trim() == null ? certificate.getCertificatedRank() : in.nextLine().trim());
+            certificate.setCandidate(candidate);
+            if (option.toString().equals("insert")) {
+                certificates.add(certificate);
+                System.out.println("Do you want add another certificate for this candidate ? Y/n");
+                if (in.nextLine().trim().equalsIgnoreCase("Y")) {
+                    continue;
+                } else {
+                    List<Certificate> listToSave = certificates.subList(sizeOfCertificates,
+                            certificates.size());
+                    listToSave.forEach(ce -> {
+                        try {
+                            certificateController.saveOrUpdate(ce);
+                        } catch (SQLException e) {
+                            throw new SystemInterruptedException("System has problem, please try again", e);
+                        }
+                    });
+                }
+            } else {
+                System.out.println("Do you want to update ? Y/n");
+                if (in.nextLine().trim().equalsIgnoreCase("n")) {
+                    this.showMainMenu();
+                } else {
+                    certificateController.saveOrUpdate(certificate);
+                }
+            }
+        }
+    }
+
+    private void showCandidateAndTheirCertificate(Candidate[] candidates) {
+        System.out.println("| Full Name    | Candidate_Type    | Total Certificate    | Indexes    |");
+        for (int i = 0; i < candidates.length; i++) {
+            System.out.println(" " + candidates[i].getFullName() + "    | " + candidates[i].getCandidateType()
+                    + "    | " + candidates[i].getTotalCertificate() + "    |" + (i + 1) + "    |");
+        }
+        System.out.println("----------------------------------------------------------------------------------------");
+        System.out.println("If you want to modify certificate of candidate, choose the option and use Indexes column");
+        System.out.println("----------------------------------------------------------------------------------------");
     }
 
     private void showExperiences(Experience[] experiences, String option) {
@@ -478,11 +618,12 @@ public class MainPanel {
         System.out.println("3. Edit candidate");
         System.out.println("4. Delete candidate");
         System.out.println("5. Print all candidate");
-        System.out.println("6. Exit");
+        System.out.println("6. Print all candidate and their certificate");
+        System.out.println("7. Exit");
         System.out.println("------------------------------------------------");
         System.out.println("Enter your choice: ");
         int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 6) {
+        if (choice < 1 && choice > 7) {
             System.out.println("Please try again");
         }
         return choice;

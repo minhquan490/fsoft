@@ -4,6 +4,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 import com.system.fsoft.config.DatabaseConfig;
 import com.system.fsoft.entity.Candidate;
@@ -18,9 +20,14 @@ public class CandidateRepositoryImpl implements CandidateRepository {
     private PreparedStatement statement = null;
     private ResultSet resultSet = null;
 
+    private static final String SELECT_CANDIDATE_AND_COUNT_THEIR_CERTIFICATE = "SELECT c.Candidate_ID, c.Full_Name, c.Candidate_Type, Count(ce.Certificate_ID) AS Total_Certificate FROM Candidate c INNER JOIN Certificate ce ON c.Candidate_ID = ce.Candidate_ID GROUP BY c.Candidate_ID, c.Full_Name, c.Candidate_Type, ce.Certificate_ID";
+
     public CandidateRepositoryImpl(Candidate candidate, String query) {
         this.candidate = candidate;
         this.query = query;
+    }
+
+    public CandidateRepositoryImpl() {
     }
 
     @Override
@@ -150,4 +157,31 @@ public class CandidateRepositoryImpl implements CandidateRepository {
         }
     }
 
+    @Override
+    public List<Candidate> getAllCandidateAndTheirCertidicate() throws SQLException {
+        try {
+            List<Candidate> candidates = new ArrayList<>();
+            connection = DatabaseConfig.getConnection();
+            statement = connection.prepareStatement(SELECT_CANDIDATE_AND_COUNT_THEIR_CERTIFICATE);
+            resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                Candidate candidate = new Candidate();
+                candidate.setCandidateID(resultSet.getString("Candidate_ID"));
+                candidate.setFullName(resultSet.getString("Full_Name"));
+                candidate.setCandidateType(resultSet.getInt("Candidate_Type"));
+                candidate.setTotalCertificate(resultSet.getInt("Total_Certificate"));
+                candidates.add(candidate);
+            }
+            return candidates;
+        } catch (Exception e) {
+            System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
+            return null;
+        } finally {
+            if (connection != null) {
+                resultSet.close();
+                statement.close();
+                connection.commit();
+            }
+        }
+    }
 }

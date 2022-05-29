@@ -3,6 +3,7 @@ package com.system.fsoft.service.impl;
 import java.sql.SQLException;
 import java.util.List;
 
+import com.system.fsoft.entity.Candidate;
 import com.system.fsoft.entity.Certificate;
 import com.system.fsoft.exception.CertificateNotFoundException;
 import com.system.fsoft.repository.CertificateRepository;
@@ -37,8 +38,8 @@ public class CertificateServiceImpl implements CertificateService {
     }
 
     @Override
-    public List<Certificate> getAllCertificates(String candidateID) throws SQLException {
-        return repository.getAllCertificates(candidateID);
+    public List<Certificate> getCertificatesByCandidate(Candidate candidate) throws SQLException {
+        return repository.getCertificatesByCandidate(candidate);
     }
 
 }

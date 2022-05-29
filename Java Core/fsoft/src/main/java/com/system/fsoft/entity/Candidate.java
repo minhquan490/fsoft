@@ -10,6 +10,7 @@ public class Candidate implements Serializable {
     private String phone;
     private String email;
     private int candidateType;
+    private int totalCertificate;
 
     public Candidate() {
     }
@@ -68,6 +69,14 @@ public class Candidate implements Serializable {
 
     public void setCandidateType(int candidateType) {
         this.candidateType = candidateType;
+    }
+
+    public int getTotalCertificate() {
+        return totalCertificate;
+    }
+
+    public void setTotalCertificate(int totalCertificate) {
+        this.totalCertificate = totalCertificate;
     }
 
     void showInfo() {
