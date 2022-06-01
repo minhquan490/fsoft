@@ -17,4 +17,8 @@ public class CandidateServiceImpl implements CandidateService {
         return candidateRepository.getAllCandidateAndTheirCertidicate();
     }
 
+    @Override
+    public List<Candidate> getAll() throws SQLException {
+        return candidateRepository.getAll();
+    }
 }

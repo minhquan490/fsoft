@@ -77,6 +77,10 @@ public class InternController {
         return service.getByName(name);
     }
 
+    public Intern getByID(String internID) throws SQLException {
+        return service.getByID(internID);
+    }
+
     public List<Intern> getInternsByMajor(String majorName) throws SQLException {
         return service.getByMajor(majorName.trim());
     }

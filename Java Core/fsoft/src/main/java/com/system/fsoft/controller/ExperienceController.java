@@ -29,12 +29,12 @@ public class ExperienceController {
         return new ExperienceController();
     }
 
-    public static ExperienceController init(Set<Experience> Experiences) {
-        return new ExperienceController(Experiences);
+    public static ExperienceController init(Set<Experience> experiences) {
+        return new ExperienceController(experiences);
     }
 
-    public static ExperienceController init(Experience Experience) {
-        return new ExperienceController(Experience);
+    public static ExperienceController init(Experience experience) {
+        return new ExperienceController(experience);
     }
 
     public void saveAll() throws SQLException {
@@ -74,6 +74,10 @@ public class ExperienceController {
 
     public Experience getExperienceByName(String name) throws SQLException {
         return service.getByName(name);
+    }
+
+    public Experience getByID(String experienceID) throws SQLException {
+        return service.getByID(experienceID);
     }
 
     public List<Experience> getByExperience(Float expInYear) throws SQLException {

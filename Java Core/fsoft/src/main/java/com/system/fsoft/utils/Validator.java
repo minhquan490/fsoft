@@ -1,8 +1,10 @@
 package com.system.fsoft.utils;
 
 import java.sql.Date;
-import java.time.LocalDate;
-import java.util.UUID;
+
+import com.system.fsoft.exception.BirthDateException;
+import com.system.fsoft.exception.EmailException;
+import com.system.fsoft.exception.PhoneException;
 
 public class Validator {
 
@@ -20,32 +22,38 @@ public class Validator {
     }
 
     public static Date checkInvalidDate(String date) {
-        try {
-            int year = Integer.parseInt(date.substring(date.lastIndexOf("-") - 1, date.length()));
-            String[] datetimeNow = LocalDate.now().toString().split("-");
-            int now = Integer.valueOf(datetimeNow[0]);
-            if (date.matches(DATE_VALID) && (year > 1900 && year <= now)) {
-                return Date.valueOf(date);
-            } else {
-                return null;
-            }
-        } catch (Exception e) {
-            return Date.valueOf(LocalDate.now());
+        if (!date.matches(DATE_VALID)) {
+            throw new BirthDateException("You enter wrong format ! Birth day default will be apply");
         }
+        String[] dateComponent = date.split("-");
+        int year = Integer.parseInt(dateComponent[0]);
+        int month = Integer.parseInt(dateComponent[1]);
+        int day = Integer.parseInt(dateComponent[2]);
+
+        if ((month == 1 || month == 3 || month == 5 || month == 7 || month == 8 || month == 10 || month == 12)
+                && day > 31) {
+            throw new BirthDateException(
+                    "You enter wrong " + month + " can not have " + day + " day. Default birth date will be apply");
+        }
+        if ((month == 2 || month == 4 || month == 6 || month == 9 || month == 11) && day >= 31) {
+            throw new BirthDateException(
+                    "You enter wrong " + month + " can not have " + day + " day. Default birth date will be apply");
+        }
+        if (((year % 4 == 0) && (year % 100 != 0)) || (year % 400 == 0)) {
+            if (month == 2 && day > 29) {
+                throw new BirthDateException(
+                        "You enter wrong " + month + " can not have " + day + " day beacause " + year
+                                + " is a leap year" + ". Default birth date will be apply");
+            }
+        }
+        return Date.valueOf(date);
     }
 
     public static String checkInvalidEmail(String email) {
-        try {
-            if (email.matches(EMAIL_VALID)) {
-                return email;
-            } else {
-                StringBuilder builder = new StringBuilder(UUID.randomUUID().toString());
-                return builder.append("@fsoft.com.vn").toString();
-            }
-        } catch (Exception e) {
-            StringBuilder builder = new StringBuilder(UUID.randomUUID().toString());
-            return builder.append("@fsoft.com.vn").toString();
+        if (!email.matches(EMAIL_VALID)) {
+            throw new EmailException("You enter wrong email format ! Email default will be apply");
         }
+        return email;
     }
 
     public static int checkInputInt(String in) {
@@ -58,26 +66,16 @@ public class Validator {
     }
 
     public static String checkPhone(String phone) {
-        try {
-            if (phone.matches(PHONE_VALID)) {
-                return phone;
-            } else {
-                return "0000000000";
-            }
-        } catch (Exception e) {
-            return "0000000000";
+        if (!phone.matches(PHONE_VALID)) {
+            throw new PhoneException("You enter wrong phone format ! The default phone will be apply");
         }
+        return phone;
     }
 
     public static String checkGraduationRank(String rank) {
-        try {
-            if (rank.matches(GRADUATION_RANK_VALID)) {
-                return rank;
-            } else {
-                return "D-";
-            }
-        } catch (Exception e) {
-            return "D-";
+        if (!rank.matches(GRADUATION_RANK_VALID)) {
+            throw new BirthDateException("Unknow rank ! Default value will be apply");
         }
+        return rank;
     }
 }

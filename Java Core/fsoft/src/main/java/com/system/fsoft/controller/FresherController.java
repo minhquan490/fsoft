@@ -10,82 +10,83 @@ import com.system.fsoft.service.impl.FresherServiceImpl;
 
 public class FresherController {
 
-    private String patternID = "FRS-";
-    private Set<Fresher> freshers;
-    private FresherService service = new FresherServiceImpl();
-    private Fresher fresher;
+	private String patternID = "FRS-";
+	private Set<Fresher> freshers;
+	private FresherService service = new FresherServiceImpl();
+	private Fresher fresher;
 
-    private FresherController(Set<Fresher> freshers) {
-        this.freshers = freshers;
-    }
+	private FresherController(Set<Fresher> freshers) {
+		this.freshers = freshers;
+	}
 
-    private FresherController(Fresher fresher) {
-        this.fresher = fresher;
-    }
+	private FresherController(Fresher fresher) {
+		this.fresher = fresher;
+	}
 
-    private FresherController() {
-    }
+	private FresherController() {
+	}
 
-    public static FresherController init() {
-        return new FresherController();
-    }
+	public static FresherController init() {
+		return new FresherController();
+	}
 
-    public static FresherController init(Set<Fresher> freshers) {
-        return new FresherController(freshers);
-    }
+	public static FresherController init(Set<Fresher> freshers) {
+		return new FresherController(freshers);
+	}
 
-    public static FresherController init(Fresher fresher) {
-        return new FresherController(fresher);
-    }
+	public static FresherController init(Fresher fresher) {
+		return new FresherController(fresher);
+	}
 
-    public void saveAll() throws SQLException {
-        int totalFresher = service.countInDatabase();
-        if (totalFresher == 0) {
-            throw new SQLException("Why it equal 0 ?");
-        }
-        if (this.freshers == null) {
-            System.out.println("Why it null ?");
-        }
-        for (Fresher fresher : freshers) {
-            fresher.setCandidateID(this.patternID + String.valueOf(totalFresher));
-            service.save(fresher);
-            totalFresher++;
-        }
-    }
+	public void saveAll() throws SQLException {
+		int totalFresher = service.countInDatabase();
+		if (this.freshers == null) {
+			System.out.println("Why it null ?");
+		}
+		for (Fresher fresher : freshers) {
+			fresher.setCandidateID(this.patternID + String.valueOf(totalFresher));
+			service.save(fresher);
+			totalFresher++;
+		}
+	}
 
-    public void save() throws SQLException {
-        int totalFresher = service.countInDatabase();
-        if (totalFresher == 0) {
-            throw new SQLException("Why it equal 0 ?");
-        }
-        if (this.fresher == null) {
-            System.out.println("Why it null ?");
-        }
-        fresher.setCandidateID(this.patternID + String.valueOf(totalFresher));
-        service.save(fresher);
-    }
+	public void save() throws SQLException {
+		int totalFresher = service.countInDatabase();
+		if (totalFresher == 0) {
+			throw new SQLException("Why it equal 0 ?");
+		}
+		if (this.fresher == null) {
+			System.out.println("Why it null ?");
+		}
+		fresher.setCandidateID(this.patternID + String.valueOf(totalFresher));
+		service.save(fresher);
+	}
 
-    public Fresher getFresherByName(String fresherName) throws SQLException {
-        return service.getByName(fresherName);
-    }
+	public Fresher getFresherByName(String fresherName) throws SQLException {
+		return service.getByName(fresherName);
+	}
 
-    public void edit(Fresher fresher) throws SQLException {
-        service.edit(fresher);
-    }
+	public Fresher getByID(String fresherID) throws SQLException {
+		return service.getByID(fresherID);
+	}
 
-    public void delete(Fresher fresher) throws SQLException {
-        service.delete(fresher);
-    }
+	public void edit(Fresher fresher) throws SQLException {
+		service.edit(fresher);
+	}
 
-    public List<Fresher> getFreshersByRank(String rank) throws SQLException {
-        return service.getFreshersByRank(rank);
-    }
+	public void delete(Fresher fresher) throws SQLException {
+		service.delete(fresher);
+	}
 
-    public List<Fresher> getFreshersByUniversityName(String universityName) throws SQLException {
-        return service.getFreshersByUniversity(universityName);
-    }
+	public List<Fresher> getFreshersByRank(String rank) throws SQLException {
+		return service.getFreshersByRank(rank);
+	}
 
-    public List<Fresher> getAll() throws SQLException {
-        return service.getAll();
-    }
+	public List<Fresher> getFreshersByUniversityName(String universityName) throws SQLException {
+		return service.getFreshersByUniversity(universityName);
+	}
+
+	public List<Fresher> getAll() throws SQLException {
+		return service.getAll();
+	}
 }

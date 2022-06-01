@@ -1,13 +1,15 @@
 package com.system.fsoft.gui;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
+import java.util.UUID;
 
 import com.system.fsoft.controller.CandidateController;
 import com.system.fsoft.controller.CertificateController;
@@ -19,1027 +21,518 @@ import com.system.fsoft.entity.Certificate;
 import com.system.fsoft.entity.Experience;
 import com.system.fsoft.entity.Fresher;
 import com.system.fsoft.entity.Intern;
+import com.system.fsoft.exception.BirthDateException;
+import com.system.fsoft.exception.EmailException;
+import com.system.fsoft.exception.PhoneException;
 import com.system.fsoft.exception.SystemInterruptedException;
 import com.system.fsoft.utils.Validator;
 
 public class MainPanel {
 
-    private Scanner in = new Scanner(System.in);
+	private Scanner in = new Scanner(System.in);
 
-    private MainPanel() {
-    }
+	private MainPanel() {
+	}
 
-    public static MainPanel createPanel() {
-        return new MainPanel();
-    }
+	public static MainPanel createPanel() {
+		return new MainPanel();
+	}
 
-    public void run() throws SQLException {
-        int choice = this.showMainMenu();
-        switch (choice) {
-            case 1:
-                int choiceAdd = this.showMenuAdd();
-                switch (choiceAdd) {
-                    case 1:
-                        int userChoiceAddIntern = this.addInternMenu();
-                        if (userChoiceAddIntern == 1) {
-                            System.out.println(
-                                    "Warning: Check infomation of Candidate who you will input. Regulatory compliance or take more time to finish work");
-                            InternController internController = InternController.init(this.addListIntern());
-                            internController.saveAll();
-                        }
-                        if (userChoiceAddIntern == 2) {
-                            System.out.println(
-                                    "Warning: Check infomation of Candidate who you will input. Regulatory compliance or take more time to finish work");
-                            InternController internController = InternController.init(this.addIntern());
-                            internController.save();
-                        }
-                        if (userChoiceAddIntern == 3) {
-                            this.showMenuAdd();
-                        }
-                        break;
-                    case 2:
-                        int userChoiceAddFresher = this.addFresherMenu();
-                        if (userChoiceAddFresher == 1) {
-                            System.out.println(
-                                    "Warning: Check infomation of Candidate who you will input. Regulatory compliance or take more time to finish work");
-                            FresherController fresherController = FresherController.init(this.addListFresher());
-                            fresherController.saveAll();
-                        }
-                        if (userChoiceAddFresher == 2) {
-                            System.out.println(
-                                    "Warning: Check infomation of Candidate who you will input. Regulatory compliance or take more time to finish work");
-                            FresherController fresherController = FresherController.init(this.addFresher());
-                            fresherController.save();
-                        }
-                        if (userChoiceAddFresher == 3) {
-                            this.showMenuAdd();
-                        }
-                        break;
-                    case 3:
-                        int userChoiceAddExperience = this.addExperienceMenu();
-                        if (userChoiceAddExperience == 1) {
-                            System.out.println(
-                                    "Warning: Check infomation of Candidate who you will input. Regulatory compliance or take more time to finish work");
-                            ExperienceController experienceController = ExperienceController
-                                    .init(this.addListExperience());
-                            experienceController.saveAll();
-                        }
-                        if (userChoiceAddExperience == 2) {
-                            System.out.println(
-                                    "Warning: Check infomation of Candidate who you will input. Regulatory compliance or take more time to finish work");
-                            ExperienceController experienceController = ExperienceController.init(this.addExperience());
-                            experienceController.save();
-                        }
-                        if (userChoiceAddExperience == 3) {
-                            this.showMenuAdd();
-                        }
-                    case 4:
-                        this.showMainMenu();
-                        break;
-                    case 5:
-                        this.showMenuFind();
-                        break;
-                    case 6:
-                        this.showMenuDelete();
-                        break;
-                    case 7:
-                        this.showMenuEdit();
-                        break;
-                    case 8:
-                        this.showAllCandidate();
-                        break;
-                    case 9:
-                        return;
-                    default:
-                        System.out.println("Input 1-9");
-                        break;
-                }
-                break;
-            case 2:
-                int choiceFind = this.showMenuFind();
-                StringBuilder optionFind = new StringBuilder("find");
-                switch (choiceFind) {
-                    case 1:
-                        int choiceFindIntern = this.findInternMenu();
-                        if (choiceFindIntern == 1) {
-                            InternController internController = InternController.init();
-                            System.out.println("Input intern's name: ");
-                            Intern intern = internController.getInternByName(in.nextLine().trim());
-                            if (intern == null) {
-                                System.out.println("Intern doesn't exist");
-                            } else {
-                                this.showInterns((Intern[]) Arrays.asList(intern).toArray(), optionFind.toString());
-                            }
-                        }
-                        if (choiceFindIntern == 2) {
-                            InternController internController = InternController.init();
-                            System.out.println("Enter intern's major: ");
-                            List<Intern> interns = internController.getInternsByMajor(in.nextLine());
-                            if (interns.isEmpty()) {
-                                System.out.println("No intern found");
-                            } else {
-                                this.showInterns((Intern[]) interns.toArray(), optionFind.toString());
-                            }
-                        }
-                        if (choiceFindIntern == 3) {
-                            InternController internController = InternController.init();
-                            System.out.println("Enter intern's university name");
-                            List<Intern> interns = internController.getInternsByUniversity(in.nextLine());
-                            if (interns.isEmpty()) {
-                                System.out.println("No intern found");
-                            } else {
-                                this.showInterns((Intern[]) interns.toArray(), optionFind.toString());
-                            }
-                        }
-                        if (choiceFindIntern == 4) {
-                            this.showMenuFind();
-                        }
-                        break;
-                    case 2:
-                        int choiceFindFresher = this.findFresherMenu();
-                        if (choiceFindFresher == 1) {
-                            FresherController fresherController = FresherController.init();
-                            System.out.println("Enter fresher's name: ");
-                            Fresher fresher = fresherController.getFresherByName(in.nextLine().trim());
-                            if (fresher == null) {
-                                System.out.println("Fresher doesn't exit");
-                            } else {
-                                this.showFreshers((Fresher[]) Arrays.asList(fresher).toArray(), optionFind.toString());
-                            }
-                        }
-                        if (choiceFindFresher == 2) {
-                            FresherController fresherController = FresherController.init();
-                            System.out.println("Enter fresher's rank to find: ");
-                            List<Fresher> freshers = fresherController
-                                    .getFreshersByRank(in.nextLine().trim());
-                            if (freshers.isEmpty()) {
-                                System.out.println("No fresher found");
-                            } else {
-                                this.showFreshers((Fresher[]) freshers.toArray(), optionFind.toString());
-                            }
-                        }
-                        if (choiceFindFresher == 3) {
-                            FresherController fresherController = FresherController.init();
-                            System.out.println("Enter fresher's university: ");
-                            List<Fresher> freshers = fresherController
-                                    .getFreshersByRank(in.nextLine().trim());
-                            if (freshers.isEmpty()) {
-                                System.out.println("No fresher have university:  " + in.nextLine());
-                            } else {
-                                this.showFreshers((Fresher[]) freshers.toArray(), optionFind.toString());
-                            }
-                        }
-                        if (choiceFindFresher == 4) {
-                            this.showMenuFind();
-                        }
-                        break;
-                    case 3:
-                        int choiceFindExperience = this.findExperienceMenu();
-                        if (choiceFindExperience == 1) {
-                            ExperienceController experienceController = ExperienceController.init();
-                            System.out.println("Enter experience's name: ");
-                            Experience experience = experienceController.getExperienceByName(in.nextLine().trim());
-                            if (experience == null) {
-                                System.out.println("Experience doesn't exit: ");
-                            } else {
-                                this.showExperiences((Experience[]) Arrays.asList(experience).toArray(),
-                                        optionFind.toString());
-                            }
-                        }
-                        if (choiceFindExperience == 2) {
-                            ExperienceController experienceController = ExperienceController.init();
-                            System.out.println("Enter exp in year to show experiences: ");
-                            List<Experience> experiences = experienceController
-                                    .getByExperience(Float.valueOf(in.nextLine().trim()));
-                            if (experiences.isEmpty()) {
-                                System.out.println("No candidate has year in work it you input");
-                            } else {
-                                this.showExperiences((Experience[]) experiences.toArray(), optionFind.toString());
-                            }
-                        }
-                        if (choiceFindExperience == 3) {
-                            ExperienceController experienceController = ExperienceController.init();
-                            System.out.println("Enter advance skill to show experiences: ");
-                            List<Experience> experiences = experienceController
-                                    .getBySkill(Integer.valueOf(in.nextLine().trim()));
-                            if (experiences.isEmpty()) {
-                                System.out.println("No candidate has year in work it you input");
-                            } else {
-                                this.showExperiences((Experience[]) experiences.toArray(), optionFind.toString());
-                            }
-                        }
-                        if (choiceFindExperience == 4) {
-                            this.showMenuFind();
-                        }
-                        break;
-                    case 4:
-                        this.showMainMenu();
-                        break;
-                    case 5:
-                        this.showMenuAdd();
-                        break;
-                    case 6:
-                        this.showMenuDelete();
-                        break;
-                    case 7:
-                        this.showMenuEdit();
-                        break;
-                    case 8:
-                        this.showAllCandidate();
-                        break;
-                    case 9:
-                        return;
-                    default:
-                        System.out.println("Input 1-9");
-                        break;
-                }
-                break;
-            case 3:
-                int choiceEdit = this.showMenuEdit();
-                StringBuilder optionEdit = new StringBuilder("edit");
-                switch (choiceEdit) {
-                    case 1:
-                        InternController internController = InternController.init();
-                        Intern[] interns = (Intern[]) internController.getAll().toArray();
-                        this.showInterns(interns, optionEdit.toString());
-                        System.out.println("Enter candidate to edit using column Serial");
-                        internController.edit(this.editIntern(interns[Integer.valueOf(in.nextLine().trim()) - 1]));
-                        break;
-                    case 2:
-                        FresherController fresherController = FresherController.init();
-                        Fresher[] freshers = (Fresher[]) fresherController.getAll().toArray();
-                        this.showFreshers(freshers, optionEdit.toString());
-                        System.out.println("Enter candidate to edit using column Serial");
-                        fresherController.edit(this.editFresher(freshers[Integer.valueOf(in.nextLine().trim())]));
-                        break;
-                    case 3:
-                        ExperienceController experienceController = ExperienceController.init();
-                        Experience[] experiences = (Experience[]) experienceController.getAll().toArray();
-                        this.showExperiences(experiences, optionEdit.toString());
-                        System.out.println("Enter candidate to edit using column Serial");
-                        experienceController
-                                .edit(this.editExperience(experiences[Integer.valueOf(in.nextLine().trim())]));
-                        break;
-                    case 4:
-                        this.showMainMenu();
-                        break;
-                    case 5:
-                        this.showMenuFind();
-                        break;
-                    case 6:
-                        this.showMenuAdd();
-                        break;
-                    case 7:
-                        this.showMenuDelete();
-                        break;
-                    case 8:
-                        this.showAllCandidate();
-                        break;
-                    case 9:
-                        return;
-                    default:
-                        System.out.println("Input 1-9");
-                        break;
-                }
-                break;
-            case 4:
-                StringBuilder optionDelete = new StringBuilder("delete");
-                int choiceDelete = this.showMenuDelete();
-                switch (choiceDelete) {
-                    case 1:
-                        InternController internController = InternController.init();
-                        Intern[] interns = (Intern[]) internController.getAll().toArray();
-                        this.showInterns(interns, optionDelete.toString());
-                        System.out.println("Enter candidate to delete using column Serial");
-                        internController.delete(interns[Integer.valueOf(in.nextLine().trim()) - 1]);
-                        break;
-                    case 2:
-                        FresherController fresherController = FresherController.init();
-                        Fresher[] freshers = (Fresher[]) fresherController.getAll().toArray();
-                        this.showFreshers(freshers, optionDelete.toString());
-                        System.out.println("Enter candidate to delete using column Serial");
-                        fresherController.delete(freshers[Integer.valueOf(in.nextLine().trim()) - 1]);
-                        break;
-                    case 3:
-                        ExperienceController experienceController = ExperienceController.init();
-                        Experience[] experiences = (Experience[]) experienceController.getAll().toArray();
-                        this.showExperiences(experiences, optionDelete.toString());
-                        System.out.println("Enter candidate to delete using column Serial");
-                        experienceController.delete(experiences[Integer.valueOf(in.nextLine().trim()) - 1]);
-                        break;
-                    case 4:
-                        this.showMainMenu();
-                        break;
-                    case 5:
-                        this.showMenuFind();
-                        break;
-                    case 6:
-                        this.showMenuAdd();
-                        break;
-                    case 7:
-                        this.showMenuEdit();
-                        break;
-                    case 8:
-                        this.showAllCandidate();
-                        break;
-                    default:
-                        System.out.println("Input 1-8");
-                        break;
-                }
-                break;
-            case 5:
-                int choiceAllCandidate = this.showAllCandidate();
-                StringBuilder optionList = new StringBuilder("list");
-                switch (choiceAllCandidate) {
-                    case 1:
-                        InternController internController = InternController.init();
-                        List<Intern> interns = internController.getAll();
-                        System.out.println("All intern:");
-                        this.showInterns((Intern[]) interns.toArray(), optionList.toString());
-                        break;
-                    case 2:
-                        FresherController fresherController = FresherController.init();
-                        List<Fresher> freshers = fresherController.getAll();
-                        System.out.println("All fresher: ");
-                        this.showFreshers((Fresher[]) freshers.toArray(), optionList.toString());
-                        break;
-                    case 3:
-                        ExperienceController experienceController = ExperienceController.init();
-                        List<Experience> experiences = experienceController.getAll();
-                        System.out.println("All experience: ");
-                        this.showExperiences((Experience[]) experiences.toArray(), optionList.toString());
-                        break;
-                    case 4:
-                        this.showMainMenu();
-                        break;
-                    case 5:
-                        this.showMenuFind();
-                        break;
-                    case 6:
-                        this.showMenuAdd();
-                        break;
-                    case 7:
-                        this.showMenuDelete();
-                        break;
-                    case 8:
-                        this.showMenuEdit();
-                        break;
-                    default:
-                        System.out.println("Input 1-8");
-                        break;
-                }
-                break;
-            case 6:
-                CandidateController candidateController = CandidateController.init();
-                Candidate[] candidates = (Candidate[]) candidateController.getAllCandidateAndTheirCertidicate()
-                        .toArray();
-                this.showCandidateAndTheirCertificate(candidates);
-                this.certificateOption(candidates);
-                break;
-            case 7:
-                return;
-            default:
-                System.out.println("Try again please");
-                break;
-        }
-    }
+	public void run() throws SQLException {
+		this.mainMenu();
+		int choice = Integer.parseInt(in.nextLine().trim());
+		if (choice < 1 || choice > 5) {
+			throw new SystemInterruptedException("Input value from 1 to 5", null);
+		}
+		List<Candidate> candidates;
+		switch (choice) {
+		case 1:
+			candidates = this.createCandidate(new ArrayList<>());
+			System.out.println("Are you sure ? Y/n");
+			if (in.nextLine().trim().equalsIgnoreCase("y")) {
+				List<Intern> interns = new ArrayList<>();
+				List<Experience> experiences = new ArrayList<>();
+				List<Fresher> freshers = new ArrayList<>();
+				candidates.forEach((c) -> {
+					if (c instanceof Intern) {
+						Intern intern = (Intern) c;
+						interns.add(intern);
+					}
+					if (c instanceof Experience) {
+						Experience experience = (Experience) c;
+						experiences.add(experience);
+					}
+					if (c instanceof Fresher) {
+						Fresher fresher = (Fresher) c;
+						freshers.add(fresher);
+					}
+				});
+				if (!interns.isEmpty()) {
+					InternController internController = InternController.init(new HashSet<>(interns));
+					internController.saveAll();
+				}
+				if (!experiences.isEmpty()) {
+					ExperienceController experienceController = ExperienceController.init(new HashSet<>(experiences));
+					experienceController.saveAll();
+				}
+				if (!freshers.isEmpty()) {
+					FresherController fresherController = FresherController.init(new HashSet<>(freshers));
+					fresherController.saveAll();
+				}
+			} else {
+				this.createCandidate(candidates);
+			}
+			break;
+		case 2:
+			candidates = CandidateController.init().getAll();
+			this.showCandidates((Candidate[]) candidates.toArray());
+			System.out.println("Do you want update ? Use indexes column");
+			System.out.println("Input index: ");
+			try {
+				int index = Integer.parseInt(in.nextLine().trim());
+				Candidate candidate = this.showCandidateForEdit(candidates.get(index - 1));
+				if (candidate instanceof Experience) {
+					Experience experience = (Experience) candidate;
+					ExperienceController experienceController = ExperienceController.init();
+					experienceController.edit(experience);
+				}
+				if (candidate instanceof Fresher) {
+					Fresher fresher = (Fresher) candidate;
+					FresherController fresherController = FresherController.init();
+					fresherController.edit(fresher);
+				}
+				if (candidate instanceof Intern) {
+					Intern intern = (Intern) candidate;
+					InternController internController = InternController.init();
+					internController.edit(intern);
+				}
+			} catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+				System.out.println("Something wrong with your input !");
+				this.mainMenu();
+			}
+			break;
+		case 3:
+			candidates = CandidateController.init().getAll();
+			this.showCandidates((Candidate[]) candidates.toArray());
+			System.out.println("Do you want update ? Use indexes column");
+			System.out.println("Input index: ");
+			try {
+				int index = Integer.parseInt(in.nextLine().trim());
+				Candidate candidate = candidates.get(index - 1);
+				if (candidate.getCandidateType() == 0) {
+					ExperienceController experienceController = ExperienceController.init();
+					Experience experience = new Experience();
+					experience.setCandidateID(candidate.getCandidateID());
+					experienceController.delete(experience);
+				}
+				if (candidate.getCandidateType() == 1) {
+					FresherController fresherController = FresherController.init();
+					Fresher fresher = new Fresher();
+					fresher.setCandidateID(candidate.getCandidateID());
+					fresherController.delete(fresher);
+				}
+				if (candidate.getCandidateType() == 2) {
+					InternController internController = InternController.init();
+					Intern intern = new Intern();
+					intern.setCandidateID(candidate.getCandidateID());
+					internController.delete(intern);
+				}
+			} catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
+				System.out.println("Something wrong with your input !");
+				this.mainMenu();
+			}
+			break;
+		case 4:
+			candidates = CandidateController.init().getAllCandidateAndTheirCertidicate();
+			candidates.sort(Comparator.nullsLast(Comparator.comparingInt(Candidate::getCandidateType).reversed()
+					.thenComparing(Candidate::getBirthDate)));
+			this.showCandidates((Candidate[]) candidates.toArray());
+			try {
+				int yourChoice = this.showCandidateForAddCertificate(candidates);
+				if (yourChoice < 1 && yourChoice > 3) {
+					System.out.println("You should be input value 1 - 3");
+					this.mainMenu();
+				}
+				CertificateController certificateController = CertificateController.init();
+				Candidate candidate;
+				List<Certificate> certificates;
+				switch (yourChoice) {
+				case 1:
+					System.out.println("Candidate index ?");
+					int index = Integer.parseInt(in.nextLine().trim());
+					candidate = candidates.get(index - 1);
+					certificates = this.getInfoOfCertificate(candidate,
+							certificateController.getCertificatesByCandidate(candidate));
+					certificates.forEach(ce -> {
+						try {
+							certificateController.saveOrUpdate(ce);
+						} catch (SQLException e) {
+							throw new SystemInterruptedException("System has problem, please try later", e);
+						}
+					});
+					break;
+				case 2:
+					System.out.println("Candidate index ?");
+					int idx = Integer.parseInt(in.nextLine().trim());
+					candidate = candidates.get(idx - 1);
+					certificates = certificateController.getCertificatesByCandidate(candidate);
+					this.showCertificateInfo(certificates);
+					System.out.println("Input certificate index");
+					try {
+						int certificateIndex = Integer.parseInt(in.nextLine().trim());
+						certificateController.delete(certificates.get(certificateIndex - 1));
+					} catch (Exception e) {
+						System.out.println("Something wrong");
+						this.mainMenu();
+					}
+					break;
+				case 3:
+					this.mainMenu();
+					break;
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("You should be input value 1 - 5");
+				this.mainMenu();
+			}
+			break;
+		case 5:
+			System.out.println("See you later !");
+			break;
+		}
+	}
 
-    private void certificateOption(Candidate[] candidates) throws SQLException {
-        CertificateController certificateController = CertificateController.init();
-        try {
-            System.out.println("1. View, modify and add certificate for candidate");
-            System.out.println("2. delete certificate");
-            System.out.println("3. Exit");
-            int choice = Integer.valueOf(in.nextLine().trim());
-            if (choice == 1) {
-                System.out.println("Index of Candidate: ");
-                int index = Integer.valueOf(in.nextLine().trim());
-                Candidate candidate = candidates[index - 1];
-                List<Certificate> certificates = certificateController.getCertificatesByCandidate(candidate);
-                this.showCertificates((Certificate[]) certificates.toArray());
-                System.out.println("Do you want insert or update ?");
-                if (in.nextLine().trim().equalsIgnoreCase("insert")) {
-                    this.certificateToSaveOrUpdate(candidate, new Certificate(), certificates);
-                }
-                if (in.nextLine().trim().equalsIgnoreCase("update")) {
-                    System.out.println("Enter index of certificate this you want to update: ");
-                    int cerIndex = Integer.valueOf(in.nextLine().trim());
-                    this.certificateToSaveOrUpdate(candidate, certificates.get(cerIndex - 1), certificates);
-                }
-                if (!in.nextLine().trim().equalsIgnoreCase("update")
-                        || !in.nextLine().trim().equalsIgnoreCase("insert")) {
-                    System.out.println("INSERT or UPDATE ?");
-                    this.certificateOption(candidates);
-                }
-            }
-            if (choice == 2) {
-                System.out.println("Index of Candidate: ");
-                int index = Integer.valueOf(in.nextLine().trim());
-                Candidate candidate = candidates[index - 1];
-                List<Certificate> certificates = certificateController.getCertificatesByCandidate(candidate);
-                this.showCertificates((Certificate[]) certificates.toArray());
-                System.out.println("Input index of certificate: ");
-                int cerIndex = Integer.valueOf(in.nextLine().trim());
-                certificateController.delete(certificates.get(cerIndex - 1));
-            }
-            if (choice == 3) {
-                this.showMainMenu();
-            }
-        } catch (NumberFormatException e) {
-            System.out.println("Input number");
-        }
-    }
+	private void showCertificateInfo(List<Certificate> certificates) {
+		System.out.println("| Certificate name    | Certificate rank    | Certificate date | index    |");
+		for (Certificate certificate : certificates) {
+			System.out.println("| " + certificate.getCertificatedName() + "    | " + certificate.getCertificatedRank()
+					+ "    | " + certificate.getCertificatedDate() + " |" + certificates.indexOf(certificate) + 1
+					+ "    |");
+		}
+	}
 
-    private void showCertificates(Certificate[] certificates) {
-        System.out.println("| Certificate Name    | Certificate Rank     | Certificate Day    | Indexes    |");
-        for (int i = 0; i < certificates.length; i++) {
-            System.out.println(
-                    "| " + certificates[i].getCertificatedName() + "    | " + certificates[i].getCertificatedRank()
-                            + "    | " + certificates[i].getCertificatedDate().toString() + "    | " + (i + 1));
-        }
-    }
+	private void mainMenu() {
+		System.out.println("  WELCOME TO CANDIDATE MANAGEMENT APPLICATION  ");
+		System.out.println("------------------------------------------------");
+		System.out.println("1. Create candidate");
+		System.out.println("2. Update candidate");
+		System.out.println("3. Delete candidate");
+		System.out.println("4. Show all candidate (add certificate for candidate here)");
+		System.out.println("5. Exit");
+	}
 
-    private void certificateToSaveOrUpdate(Candidate candidate, final Certificate certificate,
-            List<Certificate> certificates) throws SQLException {
-        int sizeOfCertificates;
-        if (certificates == null) {
-            certificates = new ArrayList<>();
-            sizeOfCertificates = 0;
-        } else {
-            sizeOfCertificates = certificates.size();
-        }
-        CertificateController certificateController = CertificateController.init();
-        StringBuilder option = new StringBuilder("insert");
-        if (certificate.getCandidateID() != null && !certificates.isEmpty()) {
-            certificates.forEach(ce -> {
-                try {
-                    if (ce.getCertificatedID().equals(certificate.getCandidateID())) {
-                        option.delete(0, option.length());
-                        option.append("update");
-                    }
-                } catch (Exception e) {
-                    throw new SystemInterruptedException("Something is wrong", e);
-                }
-            });
-        }
-        while (true) {
-            System.out.println("Input certificate's name (Enter to skip): ");
-            certificate.setCertificatedName(
-                    in.nextLine().trim() == null ? certificate.getCertificatedName() : in.nextLine().trim());
-            System.out.println("Input day receive certificate (Enter to skip): ");
-            certificate.setCertificatedDate(in.nextLine().trim() == null ? certificate.getCertificatedDate()
-                    : Validator.checkInvalidDate(in.nextLine().trim()));
-            System.out.println("Input certificate's rank (Enter to skip): ");
-            certificate.setCertificatedRank(
-                    in.nextLine().trim() == null ? certificate.getCertificatedRank() : in.nextLine().trim());
-            certificate.setCandidate(candidate);
-            if (option.toString().equals("insert")) {
-                certificates.add(certificate);
-                System.out.println("Do you want add another certificate for this candidate ? Y/n");
-                if (in.nextLine().trim().equalsIgnoreCase("Y")) {
-                    continue;
-                } else {
-                    List<Certificate> listToSave = certificates.subList(sizeOfCertificates,
-                            certificates.size());
-                    listToSave.forEach(ce -> {
-                        try {
-                            certificateController.saveOrUpdate(ce);
-                        } catch (SQLException e) {
-                            throw new SystemInterruptedException("System has problem, please try again", e);
-                        }
-                    });
-                }
-            } else {
-                System.out.println("Do you want to update ? Y/n");
-                if (in.nextLine().trim().equalsIgnoreCase("n")) {
-                    this.showMainMenu();
-                } else {
-                    certificateController.saveOrUpdate(certificate);
-                }
-            }
-        }
-    }
+	private List<Certificate> getInfoOfCertificate(Candidate candidate, List<Certificate> certificates) {
+		if (certificates == null) {
+			certificates = new ArrayList<>();
+		}
+		Certificate certificate = new Certificate();
+		System.out.println("Certificate name ?");
+		String name = in.nextLine().trim();
+		certificate.setCertificatedName(name);
+		System.out.println("Certificate rank ?");
+		try {
+			String rank = in.nextLine().trim();
+			certificate.setCertificatedRank(Validator.checkGraduationRank(rank));
+		} catch (BirthDateException e) {
+			certificate.setCertificatedRank("F");
+		}
+		System.out.println("Graduation date ?");
+		try {
+			String graduationDate = in.nextLine().trim();
+			certificate.setCertificatedDate(Validator.checkInvalidDate(graduationDate));
+		} catch (BirthDateException | IllegalArgumentException e) {
+			certificate.setCertificatedDate(Date.valueOf(LocalDate.now()));
+		}
+		certificate.setCandidate(candidate);
+		certificates.add(certificate);
+		System.out.println("Would you like to add another certificate ? Y/n");
+		if (in.nextLine().trim().equalsIgnoreCase("n")) {
+			return certificates;
+		} else {
+			return getInfoOfCertificate(candidate, certificates);
+		}
 
-    private void showCandidateAndTheirCertificate(Candidate[] candidates) {
-        System.out.println("| Full Name    | Candidate_Type    | Total Certificate    | Indexes    |");
-        for (int i = 0; i < candidates.length; i++) {
-            System.out.println(" " + candidates[i].getFullName() + "    | " + candidates[i].getCandidateType()
-                    + "    | " + candidates[i].getTotalCertificate() + "    |" + (i + 1) + "    |");
-        }
-        System.out.println("----------------------------------------------------------------------------------------");
-        System.out.println("If you want to modify certificate of candidate, choose the option and use Indexes column");
-        System.out.println("----------------------------------------------------------------------------------------");
-    }
+	}
 
-    private void showExperiences(Experience[] experiences, String option) {
-        System.out.println(
-                "Full Name    | Birth Day    | Phone    | Email    | Exp in year   | Advance skill    | Serial    ");
-        for (int i = 0; i < experiences.length; i++) {
-            System.out.println(experiences[i].getFullName() + "    | " + experiences[i].getBirthDate() + "    | "
-                    + experiences[i].getPhone() + "    | " + experiences[i].getEmail() + "    | "
-                    + experiences[i].getExpInYear()
-                    + "    | " + experiences[i].getProSkill() + "    | " + (i + 1));
-        }
-        System.out.println();
-        System.out.println();
-        System.out.println("Press any key and enter to exit to find center....");
-        if (in.nextLine() != null && option.equals("find")) {
-            this.showMenuFind();
-        }
-        if (in.nextLine() != null && option.equals("edit")) {
-            this.showMenuEdit();
-        }
-        if (in.nextLine() != null && option.equals("delete")) {
-            this.showMenuDelete();
-        }
-        if (in.nextLine() != null && option.equals("list")) {
-            this.showAllCandidate();
-        }
-    }
+	private int showCandidateForAddCertificate(Collection<Candidate> candidates) {
+		int noCertificate = 0;
+		for (Candidate candidate : candidates) {
+			if (candidate.getTotalCertificate() == 0) {
+				noCertificate += 1;
+			}
+		}
+		System.out.println("There is " + noCertificate
+				+ " candidate not have certificate. Would you like to add certificate for them ?");
+		System.out.println("1. Add certificate for candidate (using index)");
+		System.out.println("2. Remove certificate of candidate");
+		System.out.println("3. Exit to main menu");
+		System.out.println("----------------------------------------------");
+		System.out.println("Your choice ?");
+		return Integer.parseInt(in.nextLine().trim());
+	}
 
-    private void showFreshers(Fresher[] freshers, String option) {
-        System.out.println(
-                "Full Name    | Birth Day    | Phone    | Email    | Graduation Day    | Graduation Rank    | University    | Serial    ");
-        for (int i = 0; i < freshers.length; i++) {
-            System.out.println(freshers[i].getFullName() + "    | " + freshers[i].getBirthDate() + "    | "
-                    + freshers[i].getPhone() + "    | " + freshers[i].getEmail() + "    | "
-                    + freshers[i].getGraduationDate().toString()
-                    + "    | " + freshers[i].getGraduationRank() + "    | " + freshers[i].getEducation() + "    | "
-                    + (i + 1));
-        }
-        System.out.println();
-        System.out.println();
-        System.out.println("Press any key and enter to exit to find center....");
-        if (in.nextLine() != null && option.equals("find")) {
-            this.showMenuFind();
-        }
-        if (in.nextLine() != null && option.equals("edit")) {
-            this.showMenuEdit();
-        }
-        if (in.nextLine() != null && option.equals("delete")) {
-            this.showMenuDelete();
-        }
-        if (in.nextLine() != null && option.equals("list")) {
-            this.showAllCandidate();
-        }
-    }
+	private void showCandidates(Candidate[] candidates) {
+		System.out.println("| Full Name    | Birth Day    | Phone    | Email     | Type    | Serial    |");
+		for (int i = 0; i < candidates.length; i++) {
+			System.out.println(candidates[i].getFullName() + "    | " + candidates[i].getBirthDate() + "    | "
+					+ candidates[i].getPhone() + "    | " + candidates[i].getEmail() + "    | "
+					+ candidates[i].getCandidateType() + "    | " + (i + 1));
+		}
+	}
 
-    private void showInterns(Intern[] interns, String option) {
-        System.out.println(
-                "Full Name    | Birth Day    | Phone    | Email    | Major    | Semester    | University    | Serial    ");
-        for (int i = 0; i < interns.length; i++) {
-            System.out.println(interns[i].getFullName() + "    | " + interns[i].getBirthDate() + "    | "
-                    + interns[i].getPhone() + "    | " + interns[i].getEmail() + "    | " + interns[i].getMajor()
-                    + "    | " + interns[i].getSemester() + "    | " + interns[i].getUniversityName() + "    | "
-                    + (i + 1));
-        }
-        System.out.println();
-        System.out.println();
-        System.out.println("Press any key and enter to exit to find center....");
-        if (in.nextLine() != null && option.equals("find")) {
-            this.showMenuFind();
-        }
-        if (in.nextLine() != null && option.equals("edit")) {
-            this.showMenuEdit();
-        }
-        if (in.nextLine() != null && option.equals("delete")) {
-            this.showMenuDelete();
-        }
-        if (in.nextLine() != null && option.equals("list")) {
-            this.showAllCandidate();
-        }
-    }
+	private Candidate showCandidateForEdit(Candidate candidate) throws SQLException {
+		System.out.println("Enter candidate's name (enter to skip): ");
+		candidate.setFullName(in.nextLine().trim().isEmpty() ? candidate.getFullName() : in.nextLine().trim());
+		System.out.println("Enter candidate's birth date (enter to skip): ");
+		try {
+			candidate.setBirthDate(in.nextLine().trim().isEmpty() ? candidate.getBirthDate()
+					: Validator.checkInvalidDate(in.nextLine().trim()));
+		} catch (BirthDateException e) {
+			System.out.println(e.getMessage());
+			candidate.setBirthDate(Date.valueOf(LocalDate.now()));
+		}
+		System.out.println("Enter canidate's phone (enter to skip): ");
+		try {
+			candidate.setPhone(
+					in.nextLine().trim().isEmpty() ? candidate.getPhone() : Validator.checkPhone(in.nextLine().trim()));
+		} catch (PhoneException e) {
+			System.out.println(e.getMessage());
+			candidate.setPhone("0000000000");
+		}
+		System.out.println("Enter candidate's email: ");
+		try {
+			candidate.setEmail(in.nextLine().trim().isEmpty() ? candidate.getEmail()
+					: Validator.checkInvalidEmail(in.nextLine().trim()));
+		} catch (EmailException e) {
+			System.out.println(e.getMessage());
+			StringBuilder builder = new StringBuilder(UUID.randomUUID().toString());
+			candidate.setEmail(builder.replace(4, builder.length(), "@fsoft.com.vn").toString());
+		}
+		if (candidate.getCandidateType() == 0) {
+			ExperienceController experienceController = ExperienceController.init();
+			Experience experience = experienceController.getByID(candidate.getCandidateID());
+			System.out.println("Enter exp in year (enter to skip): ");
+			try {
+				float expInYear = Float.parseFloat(in.nextLine().trim());
+				experience.setExpInYear(expInYear > 0 ? expInYear : Float.parseFloat("0.5"));
+			} catch (NullPointerException | NumberFormatException e) {
+				experience.setExpInYear(experience.getExpInYear());
+			}
+			System.out.println("Enter advanced skill (pro skill) - enter to skip: ");
+			try {
+				int proSkill = Integer.parseInt(in.nextLine().trim());
+				experience.setProSkill(proSkill > 0 ? proSkill : 1);
+			} catch (NumberFormatException e) {
+				experience.setProSkill(experience.getProSkill());
+			}
+			return experience;
+		}
+		if (candidate.getCandidateType() == 1) {
+			FresherController fresherController = FresherController.init();
+			Fresher fresher = fresherController.getByID(candidate.getCandidateID());
+			System.out.println("Enter new graduation date (enter to skip)");
+			try {
+				String graduationDate = in.nextLine().trim();
+				fresher.setGraduationDate(
+						graduationDate.isEmpty() ? fresher.getBirthDate() : Validator.checkInvalidDate(graduationDate));
+			} catch (BirthDateException e) {
+				System.out.println(e.getMessage());
+				fresher.setGraduationDate(Date.valueOf(LocalDate.now()));
+			}
+			System.out.println("Enter graduation rank (D- -> A+) - enter to skip: ");
+			try {
+				String graduationRank = in.nextLine().trim();
+				fresher.setGraduationRank(graduationRank.isEmpty() ? fresher.getGraduationRank()
+						: Validator.checkGraduationRank(graduationRank));
+			} catch (BirthDateException e) {
+				fresher.setGraduationRank("D-");
+			}
+			System.out.println("Enter fresher's university (enter to skip): ");
+			String university = in.nextLine().trim();
+			fresher.setEducation(university.isEmpty() ? fresher.getEducation() : university);
+			return fresher;
+		}
+		if (candidate.getCandidateType() == 2) {
+			InternController internController = InternController.init();
+			Intern intern = internController.getByID(candidate.getCandidateID());
+			System.out.println("Enter major (enter to skip): ");
+			String major = in.nextLine().trim();
+			intern.setMajor(major.isEmpty() ? intern.getMajor() : major);
+			System.err.println("Enter semester (enter to skip): ");
+			try {
+				int semester = Integer.parseInt(in.nextLine().trim());
+				intern.setSemester(semester > 0 ? semester : 1);
+			} catch (NumberFormatException e) {
+				intern.setSemester(intern.getSemester());
+			}
+			System.out.println("Enter university name");
+			String university = in.nextLine().trim();
+			intern.setUniversityName(university.isEmpty() ? intern.getUniversityName() : university);
+			return intern;
+		}
+		System.out.println("Type of this candidate is not yet. Do you change type of candidate ? Y/n");
+		String answer = in.nextLine().trim();
+		if (answer.equalsIgnoreCase("y")) {
+			try {
+				int type = Integer.parseInt(in.nextLine().trim());
+				candidate.setCandidateType(type > 2 ? -1 : type);
+				if (type == 0) {
+					Experience experience = Experience.of(candidate);
+					System.out.println("Enter exp in year: ");
+					try {
+						float expInYear = Float.parseFloat(in.nextLine().trim());
+						experience.setExpInYear(expInYear > 0 ? expInYear : Float.parseFloat("0.5"));
+					} catch (NullPointerException | NumberFormatException e) {
+						System.out.println("You enter wrong value ? The default value will be apply");
+						experience.setExpInYear(Float.parseFloat("0.5"));
+					}
+					System.out.println("Enter advanced skill (pro skill): ");
+					try {
+						int proSkill = Integer.parseInt(in.nextLine().trim());
+						experience.setProSkill(proSkill > 0 ? proSkill : 1);
+					} catch (NumberFormatException e) {
+						System.out.println("Wrong format !");
+						experience.setProSkill(1);
+					}
+					return experience;
+				}
+				if (type == 1) {
+					Fresher fresher = Fresher.of(candidate);
+					System.out.println("Enter graduation day: ");
+					try {
+						fresher.setGraduationDate(Validator.checkInvalidDate(in.nextLine().trim()));
+					} catch (BirthDateException e) {
+						System.out.println(e.getMessage());
+						fresher.setGraduationDate(Date.valueOf(LocalDate.now()));
+					}
+					System.out.println("Enter graduation rank (D- -> A+): ");
+					try {
+						fresher.setGraduationRank(Validator.checkGraduationRank(in.nextLine().trim()));
+					} catch (BirthDateException e) {
+						fresher.setGraduationRank("D-");
+					}
+					System.out.println("Enter fresher's university: ");
+					fresher.setEducation(in.nextLine().trim());
+					return fresher;
+				}
+				if (type == 2) {
+					Intern intern = Intern.of(candidate);
+					System.out.println("Enter major: ");
+					intern.setMajor(in.nextLine().trim());
+					System.err.println("Enter semester: ");
+					try {
+						int semester = Integer.parseInt(in.nextLine().trim());
+						intern.setSemester(semester > 0 ? semester : 1);
+					} catch (NumberFormatException e) {
+						intern.setSemester(1);
+					}
+					System.out.println("Enter university name");
+					intern.setUniversityName(in.nextLine().trim());
+					return intern;
+				}
+			} catch (NumberFormatException e) {
+				System.out.println("Wrong type !");
+				candidate.setCandidateType(-1);
+			}
+		}
+		return candidate;
+	}
 
-    private int showMainMenu() {
-        System.out.println("  WELCOME TO CANDIDATE MANAGEMENT APPLICATION  ");
-        System.out.println("------------------------------------------------");
-        System.out.println("1. Add candidate");
-        System.out.println("2. Find candidate ");
-        System.out.println("3. Edit candidate");
-        System.out.println("4. Delete candidate");
-        System.out.println("5. Print all candidate");
-        System.out.println("6. Print all candidate and their certificate");
-        System.out.println("7. Exit");
-        System.out.println("------------------------------------------------");
-        System.out.println("Enter your choice: ");
-        int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 7) {
-            System.out.println("Please try again");
-        }
-        return choice;
-    }
+	private List<Candidate> createCandidate(List<Candidate> candidates) {
+		Candidate candidate = new Candidate();
+		System.out.println("Enter candidate's name: ");
+		candidate.setFullName(in.nextLine().trim());
+		System.out.println("Enter candidate's birth date: ");
+		try {
+			candidate.setBirthDate(Validator.checkInvalidDate(in.nextLine().trim()));
+		} catch (BirthDateException e) {
+			System.out.println(e.getMessage());
+			candidate.setBirthDate(Date.valueOf(LocalDate.now()));
+		}
+		System.out.println("Enter canidate's phone: ");
+		try {
+			candidate.setPhone(Validator.checkPhone(in.nextLine().trim()));
+		} catch (PhoneException e) {
+			System.out.println(e.getMessage());
+			candidate.setPhone("0000000000");
+		}
+		System.out.println("Enter candidate's email: ");
+		try {
+			candidate.setEmail(Validator.checkInvalidEmail(in.nextLine().trim()));
+		} catch (EmailException e) {
+			System.out.println(e.getMessage());
+			StringBuilder builder = new StringBuilder(UUID.randomUUID().toString());
+			candidate.setEmail(builder.replace(4, builder.length(), "@fsoft.com.vn").toString());
+		}
+		System.out.println("Type of candidate ? (0: Experience, 1: Fresher , 2: Intern)");
+		try {
+			String type = in.nextLine().trim();
+			if (Integer.parseInt(type) > 2) {
+				candidate.setCandidateType(-1);
+			} else {
+				candidate.setCandidateType(Integer.parseInt(type));
+			}
+			if (type.equals("0")) {
+				Experience experience = Experience.of(candidate);
+				System.out.println("Enter exp in year: ");
+				try {
+					float expInYear = Float.parseFloat(in.nextLine().trim());
+					experience.setExpInYear(expInYear > 0 ? expInYear : Float.parseFloat("0.5"));
+				} catch (NullPointerException | NumberFormatException e) {
+					System.out.println("You enter wrong value ? The default value will be apply");
+					experience.setExpInYear(Float.parseFloat("0.5"));
+				}
+				System.out.println("Enter advanced skill (pro skill): ");
+				try {
+					int proSkill = Integer.parseInt(in.nextLine().trim());
+					experience.setProSkill(proSkill > 0 ? proSkill : 1);
+				} catch (NumberFormatException e) {
+					System.out.println("Wrong format !");
+					experience.setProSkill(1);
 
-    private int showMenuAdd() {
-        System.out.println("   WELCOME TO ADD CANDIDATE CENTER   ");
-        System.out.println("--------------------------------");
-        System.out.println("1. Add Intern");
-        System.out.println("2. Add Fresher");
-        System.out.println("3. Add Experience");
-        System.out.println("4. Return main menu");
-        System.out.println("5. Return find menu");
-        System.out.println("6. Return delete menu");
-        System.out.println("7. Return edit menu");
-        System.out.println("8. Return to show all menu");
-        System.out.println("9. Exit program");
-        System.out.println("------------------------------");
-        int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 9) {
-            System.out.println("Please try again");
-        }
-        return choice;
-    }
-
-    private int addInternMenu() {
-        while (true) {
-            System.out
-                    .println(
-                            "You can add intern with two ways (add list intern or only one intern). What do you choice ?");
-            System.out.println(" 1. Add intern with list. ");
-            System.out.println(" 2. Add only one intern. ");
-            System.out.println(" 3. Exit");
-            int choice = Validator.checkInputInt(in.nextLine().trim());
-            if (choice < 1 && choice > 3) {
-                System.out.println("Please try again");
-            } else {
-                return choice;
-            }
-
-        }
-    }
-
-    private int addFresherMenu() {
-        while (true) {
-            System.out
-                    .println(
-                            "You can add fresher with two ways (add list fresher or only one fresher). What do you choice ?");
-            System.out.println(" 1. Add fresher with list. ");
-            System.out.println(" 2. Add only one fresher. ");
-            System.out.println(" 3. Exit");
-            int choice = Validator.checkInputInt(in.nextLine().trim());
-            if (choice < 1 && choice > 3) {
-                System.out.println("Please try again");
-            } else {
-                return choice;
-            }
-        }
-    }
-
-    private int addExperienceMenu() {
-        System.out
-                .println(
-                        "You can add experience with two ways (add list experience or only one experience). What do you choice ?");
-        System.out.println(" 1. Add experience with list. ");
-        System.out.println(" 2. Add only one experience. ");
-        int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 2) {
-            System.out.println("Please try again");
-        }
-        return choice;
-    }
-
-    private int showMenuFind() {
-        System.out.println("    WELCOME TO FIND CENTER    ");
-        System.out.println("------------------------------");
-        System.out.println("1. Find Intern");
-        System.out.println("2. Find Fresher");
-        System.out.println("3. Find Experience");
-        System.out.println("4. Return main menu");
-        System.out.println("5. Return add menu");
-        System.out.println("6. Return delete menu");
-        System.out.println("7. Return edit menu");
-        System.out.println("8. Return to show all menu");
-        System.out.println("9. Exit program");
-        System.out.println("------------------------------");
-        int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 9) {
-            System.out.println("Please try again");
-        }
-        return choice;
-    }
-
-    private int findInternMenu() {
-        System.out.println("   FIND INTERN   ");
-        System.out.println("-----------------");
-        System.out.println("1. Find by name");
-        System.out.println("2. Find by major");
-        System.out.println("3. Find by university");
-        System.out.println("4. Exit");
-        int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 4) {
-            System.out.println("Please try again");
-        }
-        return choice;
-    }
-
-    private int findFresherMenu() {
-        System.out.println("   FIND FRESHER   ");
-        System.out.println("-----------------");
-        System.out.println("1. Find by name");
-        System.out.println("2. Find by rank");
-        System.out.println("3. Find by university");
-        System.out.println("4. Exit");
-        int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 4) {
-            System.out.println("Please try again");
-        }
-        return choice;
-    }
-
-    private int findExperienceMenu() {
-        System.out.println("   FIND EXPERIENCE   ");
-        System.out.println("-----------------");
-        System.out.println("1. Find by name");
-        System.out.println("2. Find by experience in year");
-        System.out.println("3. Find by advance skill");
-        System.out.println("4. Exit");
-        int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 4) {
-            System.out.println("Please try again");
-        }
-        return choice;
-    }
-
-    private int showMenuDelete() {
-        System.out.println("    WELCOME TO DELETE CENTER    ");
-        System.out.println("------------------------------");
-        System.out.println("1. Delete Intern");
-        System.out.println("2. Delete Fresher");
-        System.out.println("3. Delete Experience");
-        System.out.println("4. Return main menu");
-        System.out.println("5. Return find menu");
-        System.out.println("6. Return add menu");
-        System.out.println("7. Return edit menu");
-        System.out.println("8. Return to show all menu");
-        System.out.println("9. Exit program");
-        System.out.println("------------------------------");
-        int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 9) {
-            System.out.println("Please try again");
-        }
-        return choice;
-    }
-
-    private int showMenuEdit() {
-        System.out.println("    WELCOME TO EDIT CENTER    ");
-        System.out.println("------------------------------");
-        System.out.println("1. Edit Intern");
-        System.out.println("2. Edit Fresher");
-        System.out.println("3. Edit Experience");
-        System.out.println("4. Return main menu");
-        System.out.println("5. Return find menu");
-        System.out.println("6. Return add menu");
-        System.out.println("7. Return delete menu");
-        System.out.println("8. Return to show all menu");
-        System.out.println("9. Exit program");
-        System.out.println("------------------------------");
-        int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 9) {
-            System.out.println("Please try again");
-        }
-        return choice;
-    }
-
-    private int showAllCandidate() {
-        System.out.println("    WELCOME TO METADATA CENTER    ");
-        System.out.println("------------------------------");
-        System.out.println("1. Show all Intern");
-        System.out.println("2. Show all Fresher");
-        System.out.println("3. Show all Experience");
-        System.out.println("4. Return main menu");
-        System.out.println("5. Return find menu");
-        System.out.println("6. Return add menu");
-        System.out.println("7. Return delete menu");
-        System.out.println("8. Return edit menu");
-        System.out.println("9. Exit program");
-        System.out.println("------------------------------");
-        int choice = Validator.checkInputInt(in.nextLine().trim());
-        if (choice < 1 && choice > 9) {
-            System.out.println("Please try again");
-        }
-        return choice;
-    }
-
-    private Experience editExperience(Experience experience) {
-        String[] now = LocalDate.now().toString().split("-");
-        System.out.println("If you want to skip field please press space and enter");
-        while (true) {
-            System.out.println("Input Experience's full name: ");
-            experience.setFullName(in.nextLine().trim());
-            System.out.println(
-                    "Input Experience's birth day (year must be > 1900 and <" + " " + now[0]
-                            + "). Pattern: yyyy-MM-dd");
-            experience.setBirthDate(Validator.checkInvalidDate(in.nextLine().trim()));
-            System.out.println("Input experience's phone (10 digits): ");
-            experience.setPhone(Validator.checkPhone(in.nextLine().trim()));
-            System.out.println("Input experience's email (must be has @fsoft.com.vn)");
-            experience.setEmail(Validator.checkInvalidEmail(in.nextLine()));
-            System.out.println("Input exp in year: ");
-            experience.setExpInYear(Integer.valueOf(in.nextLine().trim()));
-            System.out.println("Input advanced skill: ");
-            experience.setProSkill(Integer.valueOf(in.nextLine().trim()));
-            return experience;
-        }
-    }
-
-    private Fresher editFresher(Fresher fresher) {
-        String[] now = LocalDate.now().toString().split("-");
-        System.out.println("If you want to skip field please press space and enter");
-        while (true) {
-            System.out.println("Input fresher's full name: ");
-            fresher.setFullName(in.nextLine().trim());
-            System.out.println(
-                    "Input fresher's birth day (year must be > 1900 and <" + " " + now[0] + "). Pattern: yyyy-MM-dd");
-            fresher.setBirthDate(Validator.checkInvalidDate(in.nextLine().trim()));
-            System.out.println("Input fresher's phone (10 digits): ");
-            fresher.setPhone(Validator.checkPhone(in.nextLine().trim()));
-            System.out.println("Input fresher's email (must be has @fsoft.com.vn)");
-            fresher.setEmail(Validator.checkInvalidEmail(in.nextLine()));
-            System.out.println("Input Graduation Day: ");
-            fresher.setGraduationDate(Validator.checkInvalidDate(in.nextLine().trim()));
-            System.out.println("Input Graduation Rank: ");
-            fresher.setGraduationRank(Validator.checkGraduationRank(in.nextLine().trim()));
-            System.out.println("Input fresher's university name");
-            fresher.setEducation(in.nextLine().trim());
-            return fresher;
-        }
-    }
-
-    private Intern editIntern(Intern intern) {
-        String[] now = LocalDate.now().toString().split("-");
-        System.out.println("If you want to skip field please press space and enter");
-        while (true) {
-            System.out.println("Input intern's full name (press space and enter to skip): ");
-            intern.setFullName(in.nextLine().trim().isEmpty() ? in.nextLine().trim() : intern.getFullName());
-            System.out.println(
-                    "Input intern's birth day (year must be > 1900 and <" + " " + now[0] + "). Pattern: yyyy-MM-dd");
-            intern.setBirthDate(Validator.checkInvalidDate(
-                    in.nextLine().trim().isEmpty() ? in.nextLine().trim() : intern.getBirthDate().toString()));
-            System.out.println("Input intern's phone (10 digits): ");
-            intern.setPhone(
-                    Validator.checkPhone(in.nextLine().trim().isEmpty() ? in.nextLine().trim() : intern.getPhone()));
-            System.out.println("Input intern's email (must be has @fsoft.com.vn)");
-            intern.setEmail(Validator
-                    .checkInvalidEmail(in.nextLine().trim().isEmpty() ? in.nextLine().trim() : intern.getEmail()));
-            System.out.println("Input intern's major (Do not input white space): ");
-            intern.setMajor(in.nextLine().trim().isEmpty() ? in.nextLine().trim() : intern.getMajor());
-            System.out.println("Input semester (Do not input white space): ");
-            intern.setSemester(Integer.valueOf(
-                    in.nextLine().trim().isEmpty() ? in.nextLine().trim() : String.valueOf(intern.getSemester())));
-            System.out.println("Input intern's university name: ");
-            intern.setUniversityName(
-                    in.nextLine().trim().isEmpty() ? in.nextLine().trim() : intern.getUniversityName());
-            return intern;
-        }
-    }
-
-    private Set<Intern> addListIntern() {
-        String[] now = LocalDate.now().toString().split("-");
-        Set<Intern> interns = new HashSet<>();
-        while (true) {
-            Intern intern = new Intern();
-            System.out.println("Input intern's full name: ");
-            intern.setFullName(in.nextLine().trim());
-            System.out.println(
-                    "Input intern's birth day (year must be > 1900 and <" + " " + now[0] + "). Pattern: yyyy-MM-dd");
-            intern.setBirthDate(Validator.checkInvalidDate(in.nextLine().trim()));
-            System.out.println("Input intern's phone (10 digits): ");
-            intern.setPhone(Validator.checkPhone(in.nextLine().trim()));
-            System.out.println("Input intern's email (must be has @fsoft.com.vn)");
-            intern.setEmail(Validator.checkInvalidEmail(in.nextLine()));
-            System.out.println("Input intern's major (Do not input white space): ");
-            intern.setMajor(in.nextLine().trim());
-            System.out.println("Input semester (Do not input white space): ");
-            intern.setSemester(Integer.valueOf(in.nextLine().trim()));
-            System.out.println("Input intern's university name: ");
-            intern.setUniversityName(in.nextLine().trim());
-            interns.add(intern);
-            System.out.println("Input next Candidate ? Y/n");
-            if (in.nextLine().equalsIgnoreCase("n")) {
-                return interns;
-            }
-        }
-    }
-
-    private Set<Fresher> addListFresher() {
-        String[] now = LocalDate.now().toString().split("-");
-        Set<Fresher> freshers = new HashSet<>();
-        while (true) {
-            Fresher fresher = new Fresher();
-            System.out.println("Input fresher's full name: ");
-            fresher.setFullName(in.nextLine().trim());
-            System.out.println(
-                    "Input fresher's birth day (year must be > 1900 and <" + " " + now[0] + "). Pattern: yyyy-MM-dd");
-            fresher.setBirthDate(Validator.checkInvalidDate(in.nextLine().trim()));
-            System.out.println("Input fresher's phone (10 digits): ");
-            fresher.setPhone(Validator.checkPhone(in.nextLine().trim()));
-            System.out.println("Input fresher's email (must be has @fsoft.com.vn)");
-            fresher.setEmail(Validator.checkInvalidEmail(in.nextLine()));
-            System.out.println("Input Graduation Day: ");
-            fresher.setGraduationDate(Validator.checkInvalidDate(in.nextLine().trim()));
-            System.out.println("Input Graduation Rank: ");
-            fresher.setGraduationRank(Validator.checkGraduationRank(in.nextLine().trim()));
-            System.out.println("Input fresher's university name");
-            fresher.setEducation(in.nextLine().trim());
-            freshers.add(fresher);
-            System.out.println("Input next Candidate ? Y/n");
-            if (in.nextLine().equalsIgnoreCase("n")) {
-                return freshers;
-            }
-        }
-    }
-
-    private Set<Experience> addListExperience() {
-        String[] now = LocalDate.now().toString().split("-");
-        Set<Experience> experiences = new HashSet<>();
-        while (true) {
-            Experience experience = new Experience();
-            System.out.println("Input Experience's full name: ");
-            experience.setFullName(in.nextLine().trim());
-            System.out.println(
-                    "Input Experience's birth day (year must be > 1900 and <" + " " + now[0]
-                            + "). Pattern: yyyy-MM-dd");
-            experience.setBirthDate(Validator.checkInvalidDate(in.nextLine().trim()));
-            System.out.println("Input experience's phone (10 digits): ");
-            experience.setPhone(Validator.checkPhone(in.nextLine().trim()));
-            System.out.println("Input experience's email (must be has @fsoft.com.vn)");
-            experience.setEmail(Validator.checkInvalidEmail(in.nextLine()));
-            System.out.println("Input exp in year: ");
-            experience.setExpInYear(Integer.valueOf(in.nextLine().trim()));
-            System.out.println("Input advanced skill: ");
-            experience.setProSkill(Integer.valueOf(in.nextLine().trim()));
-            experiences.add(experience);
-            System.out.println("Input next Candidate ? Y/n");
-            if (in.nextLine().equalsIgnoreCase("n")) {
-                return experiences;
-            }
-        }
-    }
-
-    private Intern addIntern() {
-        String[] now = LocalDate.now().toString().split("-");
-        while (true) {
-            Intern intern = new Intern();
-            System.out.println("Input intern's full name: ");
-            intern.setFullName(in.nextLine().trim());
-            System.out.println(
-                    "Input intern's birth day (year must be > 1900 and <" + " " + now[0] + "). Pattern: yyyy-MM-dd");
-            intern.setBirthDate(Validator.checkInvalidDate(in.nextLine().trim()));
-            System.out.println("Input intern's phone (10 digits): ");
-            intern.setPhone(Validator.checkPhone(in.nextLine().trim()));
-            System.out.println("Input intern's email (must be has @fsoft.com.vn)");
-            intern.setEmail(Validator.checkInvalidEmail(in.nextLine()));
-            System.out.println("Input intern's major (Do not input white space): ");
-            intern.setMajor(in.nextLine().trim());
-            System.out.println("Input semester (Do not input white space): ");
-            intern.setSemester(Integer.valueOf(in.nextLine().trim()));
-            System.out.println("Input intern's university name: ");
-            intern.setUniversityName(in.nextLine().trim());
-            return intern;
-        }
-    }
-
-    private Fresher addFresher() {
-        String[] now = LocalDate.now().toString().split("-");
-        while (true) {
-            Fresher fresher = new Fresher();
-            System.out.println("Input fresher's full name: ");
-            fresher.setFullName(in.nextLine().trim());
-            System.out.println(
-                    "Input fresher's birth day (year must be > 1900 and <" + " " + now[0] + "). Pattern: yyyy-MM-dd");
-            fresher.setBirthDate(Validator.checkInvalidDate(in.nextLine().trim()));
-            System.out.println("Input fresher's phone (10 digits): ");
-            fresher.setPhone(Validator.checkPhone(in.nextLine().trim()));
-            System.out.println("Input fresher's email (must be has @fsoft.com.vn)");
-            fresher.setEmail(Validator.checkInvalidEmail(in.nextLine()));
-            System.out.println("Input Graduation Day: ");
-            fresher.setGraduationDate(Validator.checkInvalidDate(in.nextLine().trim()));
-            System.out.println("Input Graduation Rank: ");
-            fresher.setGraduationRank(Validator.checkGraduationRank(in.nextLine().trim()));
-            System.out.println("Input fresher's university name");
-            fresher.setEducation(in.nextLine().trim());
-            return fresher;
-        }
-    }
-
-    private Experience addExperience() {
-        String[] now = LocalDate.now().toString().split("-");
-        while (true) {
-            Experience experience = new Experience();
-            System.out.println("Input Experience's full name: ");
-            experience.setFullName(in.nextLine().trim());
-            System.out.println(
-                    "Input Experience's birth day (year must be > 1900 and <" + " " + now[0]
-                            + "). Pattern: yyyy-MM-dd");
-            experience.setBirthDate(Validator.checkInvalidDate(in.nextLine().trim()));
-            System.out.println("Input experience's phone (10 digits): ");
-            experience.setPhone(Validator.checkPhone(in.nextLine().trim()));
-            System.out.println("Input experience's email (must be has @fsoft.com.vn)");
-            experience.setEmail(Validator.checkInvalidEmail(in.nextLine()));
-            System.out.println("Input exp in year: ");
-            experience.setExpInYear(Integer.valueOf(in.nextLine().trim()));
-            System.out.println("Input advanced skill: ");
-            experience.setProSkill(Integer.valueOf(in.nextLine().trim()));
-            return experience;
-        }
-    }
+				}
+			}
+			if (type.equals("1")) {
+				Fresher fresher = Fresher.of(candidate);
+				System.out.println("Enter graduation day: ");
+				try {
+					fresher.setGraduationDate(Validator.checkInvalidDate(in.nextLine().trim()));
+				} catch (BirthDateException e) {
+					System.out.println(e.getMessage());
+					fresher.setGraduationDate(Date.valueOf(LocalDate.now()));
+				}
+				System.out.println("Enter graduation rank (D- -> A+): ");
+				try {
+					fresher.setGraduationRank(Validator.checkGraduationRank(in.nextLine().trim()));
+				} catch (BirthDateException e) {
+					fresher.setGraduationRank("D-");
+				}
+				System.out.println("Enter fresher's university: ");
+				fresher.setEducation(in.nextLine().trim());
+				candidates.add(fresher);
+			}
+			if (type.equals("2")) {
+				Intern intern = Intern.of(candidate);
+				System.out.println("Enter major: ");
+				intern.setMajor(in.nextLine().trim());
+				System.err.println("Enter semester: ");
+				try {
+					int semester = Integer.parseInt(in.nextLine().trim());
+					intern.setSemester(semester > 0 ? semester : 1);
+				} catch (NumberFormatException e) {
+					intern.setSemester(1);
+				}
+				System.out.println("Enter university name");
+				intern.setUniversityName(in.nextLine().trim());
+				candidates.add(intern);
+			}
+		} catch (NumberFormatException e) {
+			System.out.println("Wrong type !");
+			candidate.setCandidateType(-1);
+		}
+		System.out.println("Do you want add another candidate ? Y/n");
+		if (in.nextLine().trim().equalsIgnoreCase("Y")) {
+			createCandidate(candidates);
+		}
+		return candidates;
+	}
 }

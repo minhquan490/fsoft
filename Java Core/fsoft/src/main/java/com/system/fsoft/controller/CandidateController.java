@@ -21,4 +21,8 @@ public class CandidateController {
     public List<Candidate> getAllCandidateAndTheirCertidicate() throws SQLException {
         return candidateService.getAllCandidateAndTheirCertidicate();
     }
+
+    public List<Candidate> getAll() throws SQLException {
+        return candidateService.getAll();
+    }
 }

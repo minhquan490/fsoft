@@ -15,4 +15,6 @@ public interface CandidateRepository extends Runnable {
     void editViaResulSet() throws SQLException;
 
     List<Candidate> getAllCandidateAndTheirCertidicate() throws SQLException;
+
+    List<Candidate> getAll() throws SQLException;
 }
