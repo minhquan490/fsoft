@@ -16,11 +16,7 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 	private Candidate candidate;
 	private String query;
 
-	private Connection connection = null;
-	private PreparedStatement statement = null;
-	private ResultSet resultSet = null;
-
-	private static final String SELECT_CANDIDATE_AND_COUNT_THEIR_CERTIFICATE = "SELECT c.Candidate_ID, c.Full_Name, c.Candidate_Type, Count(ce.Certificate_ID) AS Total_Certificate FROM Candidate c INNER JOIN Certificate ce ON c.Candidate_ID = ce.Candidate_ID GROUP BY c.Candidate_ID, c.Full_Name, c.Candidate_Type, ce.Certificate_ID";
+	private static final String SELECT_CANDIDATE_AND_COUNT_THEIR_CERTIFICATE = "SELECT c.Candidate_ID, c.Full_Name, c.Candidate_Type, Count(ce.Certificate_ID) AS Total_Certificate FROM Candidate c LEFT JOIN Certificate ce ON c.Candidate_ID = ce.Candidate_ID GROUP BY c.Candidate_ID, c.Full_Name, c.Candidate_Type, ce.Certificate_ID";
 	private static final String SELECT_ALL = "SELECT * FROM Candidate";
 
 	public CandidateRepositoryImpl(Candidate candidate, String query) {
@@ -33,9 +29,8 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 
 	@Override
 	public void save() throws SQLException {
-		try {
-			connection = DataSource.getConnection();
-			statement = connection.prepareStatement(query);
+		try (Connection connection = DataSource.getConnection();
+				PreparedStatement statement = connection.prepareStatement(query);) {
 			statement.setString(1, this.candidate.getCandidateID());
 			statement.setString(2, this.candidate.getFullName());
 			statement.setDate(3, this.candidate.getBirthDate());
@@ -46,19 +41,13 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
 			e.printStackTrace();
-		} finally {
-			if (connection != null) {
-				statement.close();
-				connection.commit();
-			}
 		}
 	}
 
 	@Override
 	public void edit() throws SQLException {
-		try {
-			connection = DataSource.getConnection();
-			statement = connection.prepareStatement(query);
+		try (Connection connection = DataSource.getConnection();
+				PreparedStatement statement = connection.prepareStatement(query);) {
 			statement.setString(1, this.candidate.getFullName());
 			statement.setDate(2, this.candidate.getBirthDate());
 			statement.setString(3, this.candidate.getPhone());
@@ -69,11 +58,6 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
 			e.printStackTrace();
-		} finally {
-			if (connection != null) {
-				statement.close();
-				connection.commit();
-			}
 		}
 	}
 
@@ -108,11 +92,10 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 
 	@Override
 	public void saveViaResultSet() throws SQLException {
-		try {
-			connection = DataSource.getConnection();
-			statement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
-			resultSet = statement.executeQuery();
+		try (Connection connection = DataSource.getConnection();
+				PreparedStatement statement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_UPDATABLE);
+				ResultSet resultSet = statement.executeQuery();) {
 			resultSet.moveToInsertRow();
 			statement.setString(1, candidate.getCandidateID());
 			resultSet.updateString(2, candidate.getFullName());
@@ -125,49 +108,38 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
 			e.printStackTrace();
-		} finally {
-			if (connection != null) {
-				resultSet.close();
-				statement.close();
-				connection.commit();
-			}
 		}
 	}
 
 	@Override
 	public void editViaResulSet() throws SQLException {
-		try {
-			connection = DataSource.getConnection();
-			statement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_UPDATABLE);
+		try (Connection connection = DataSource.getConnection();
+				PreparedStatement statement = connection.prepareStatement(query, ResultSet.TYPE_SCROLL_INSENSITIVE,
+						ResultSet.CONCUR_UPDATABLE);) {
 			statement.setString(1, candidate.getCandidateID());
-			resultSet = statement.executeQuery();
-			resultSet.updateString(2, candidate.getFullName());
-			resultSet.updateDate(3, candidate.getBirthDate());
-			resultSet.updateString(4, candidate.getPhone());
-			resultSet.updateString(5, candidate.getEmail());
-			resultSet.updateInt(6, candidate.getCandidateType());
-			resultSet.updateRow();
-			System.out.println("Update success");
+			try (ResultSet resultSet = statement.executeQuery();) {
+				resultSet.updateString(2, candidate.getFullName());
+				resultSet.updateDate(3, candidate.getBirthDate());
+				resultSet.updateString(4, candidate.getPhone());
+				resultSet.updateString(5, candidate.getEmail());
+				resultSet.updateInt(6, candidate.getCandidateType());
+				resultSet.updateRow();
+				System.out.println("Update success");
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
 			e.printStackTrace();
-		} finally {
-			if (connection != null) {
-				resultSet.close();
-				statement.close();
-				connection.commit();
-			}
 		}
 	}
 
 	@Override
 	public List<Candidate> getAllCandidateAndTheirCertidicate() throws SQLException {
-		try {
-			List<Candidate> candidates = new ArrayList<>();
-			connection = DataSource.getConnection();
-			statement = connection.prepareStatement(SELECT_CANDIDATE_AND_COUNT_THEIR_CERTIFICATE);
-			resultSet = statement.executeQuery();
+		List<Candidate> candidates = new ArrayList<>();
+		try (Connection connection = DataSource.getConnection();
+				PreparedStatement statement = connection.prepareStatement(SELECT_CANDIDATE_AND_COUNT_THEIR_CERTIFICATE);
+				ResultSet resultSet = statement.executeQuery();) {
 			while (resultSet.next()) {
 				Candidate candidate = new Candidate();
 				candidate.setCandidateID(resultSet.getString("Candidate_ID"));
@@ -181,26 +153,19 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
 			e.printStackTrace();
 			return null;
-		} finally {
-			if (connection != null) {
-				resultSet.close();
-				statement.close();
-				connection.commit();
-			}
 		}
 	}
 
 	@Override
 	public List<Candidate> getAll() throws SQLException {
 		List<Candidate> candidates = new ArrayList<>();
-		try {
-			connection = DataSource.getConnection();
-			statement = connection.prepareStatement(SELECT_ALL);
-			resultSet = statement.executeQuery();
+		try (Connection connection = DataSource.getConnection();
+				PreparedStatement statement = connection.prepareStatement(SELECT_ALL);
+				ResultSet resultSet = statement.executeQuery();) {
 			while (resultSet.next()) {
 				Candidate candidate = new Candidate();
 				candidate.setCandidateID(resultSet.getString("Candidate_ID"));
-				candidate.setBirthDate(resultSet.getDate("Birth_Date"));
+				candidate.setBirthDate(resultSet.getDate("Birth_Day"));
 				candidate.setPhone(resultSet.getString("Phone"));
 				candidate.setEmail(resultSet.getString("Email"));
 				candidate.setFullName(resultSet.getString("Full_Name"));
@@ -212,12 +177,6 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
 			e.printStackTrace();
 			return null;
-		} finally {
-			if (connection != null) {
-				resultSet.close();
-				statement.close();
-				connection.commit();
-			}
 		}
 	}
 }

@@ -47,7 +47,7 @@ public class IDGenerator {
 				resultSet = preparedStatement.executeQuery();
 				if (resultSet.last()) {
 					String id = resultSet.getString(1);
-					return Integer.parseInt(id.substring(id.lastIndexOf("-") + 1));
+					return Integer.parseInt(id.substring(id.lastIndexOf("-") + 1)) + 1;
 				} else {
 					return 1;
 				}
@@ -63,13 +63,16 @@ public class IDGenerator {
 				resultSet = preparedStatement.executeQuery();
 				if (resultSet.last()) {
 					String id = resultSet.getString(1);
-					return Integer.parseInt(id.substring(id.lastIndexOf("-") + 1));
+					return Integer.parseInt(id.substring(id.lastIndexOf("-") + 1)) + 1;
 				} else {
 					return 1;
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-				throw new SystemInterruptedException("System has problem, please try again", e);
+			} catch (Exception e) {
+				if (e instanceof NullPointerException) {
+					return 1;
+				} else {
+					throw new SystemInterruptedException("System has problem, please try again", e);
+				}
 			}
 		}
 		if (field instanceof Intern) {
@@ -80,12 +83,16 @@ public class IDGenerator {
 				resultSet = preparedStatement.executeQuery();
 				if (resultSet.last()) {
 					String id = resultSet.getString(1);
-					return Integer.parseInt(id.substring(id.lastIndexOf("-") + 1));
+					return Integer.parseInt(id.substring(id.lastIndexOf("-") + 1)) + 1;
 				} else {
 					return 1;
 				}
-			} catch (SQLException e) {
-				throw new SystemInterruptedException("System has problem, please try again", e);
+			} catch (Exception e) {
+				if (e instanceof NullPointerException) {
+					return 1;
+				} else {
+					throw new SystemInterruptedException("System has problem, please try again", e);
+				}
 			}
 		}
 		if (field instanceof Certificate) {
@@ -96,12 +103,16 @@ public class IDGenerator {
 				resultSet = preparedStatement.executeQuery();
 				if (resultSet.last()) {
 					String id = resultSet.getString(1);
-					return Integer.parseInt(id.substring(id.lastIndexOf("-") + 1));
+					return Integer.parseInt(id.substring(id.lastIndexOf("-") + 1)) + 1;
 				} else {
 					return 1;
 				}
-			} catch (SQLException e) {
-				throw new SystemInterruptedException("System has problem, please try again", e);
+			} catch (Exception e) {
+				if (e instanceof NullPointerException) {
+					return 1;
+				} else {
+					throw new SystemInterruptedException("System has problem, please try again", e);
+				}
 			}
 		}
 		return -1;

@@ -10,7 +10,6 @@ import com.system.fsoft.service.impl.FresherServiceImpl;
 
 public class FresherController {
 
-	private String patternID = "FRS-";
 	private Set<Fresher> freshers;
 	private FresherService service = new FresherServiceImpl();
 	private Fresher fresher;
@@ -39,26 +38,18 @@ public class FresherController {
 	}
 
 	public void saveAll() throws SQLException {
-		int totalFresher = service.countInDatabase();
 		if (this.freshers == null) {
 			System.out.println("Why it null ?");
 		}
 		for (Fresher fresher : freshers) {
-			fresher.setCandidateID(this.patternID + String.valueOf(totalFresher));
 			service.save(fresher);
-			totalFresher++;
 		}
 	}
 
 	public void save() throws SQLException {
-		int totalFresher = service.countInDatabase();
-		if (totalFresher == 0) {
-			throw new SQLException("Why it equal 0 ?");
-		}
 		if (this.fresher == null) {
 			System.out.println("Why it null ?");
 		}
-		fresher.setCandidateID(this.patternID + String.valueOf(totalFresher));
 		service.save(fresher);
 	}
 

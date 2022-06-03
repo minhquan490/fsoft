@@ -12,34 +12,38 @@ import com.system.fsoft.service.CertificateService;
 
 public class CertificateServiceImpl implements CertificateService {
 
-    private CertificateRepository repository = new CertificateRepositoryImpl();
+	private CertificateRepository repository = new CertificateRepositoryImpl();
 
-    @Override
-    public void saveOrUpdate(Certificate certificate) throws SQLException {
-        Certificate oldCertificate = this.get(certificate.getCandidateID());
-        if (oldCertificate == null) {
-            throw new CertificateNotFoundException(
-                    "Certificate is not exist or deleted, please reload your list to continue");
-        }
-        oldCertificate.setCertificatedName(certificate.getCertificatedName());
-        oldCertificate.setCertificatedRank(certificate.getCertificatedRank());
-        oldCertificate.setCertificatedDate(certificate.getCertificatedDate());
-        repository.saveOrUpdate(certificate);
-    }
+	@Override
+	public void saveOrUpdate(Certificate certificate) throws SQLException {
+		if (certificate.getCertificatedID() == null) {
+			repository.saveOrUpdate(certificate);
+		} else {
+			Certificate oldCertificate = this.get(certificate.getCertificatedID());
+			if (oldCertificate == null) {
+				throw new CertificateNotFoundException(
+						"Certificate is not exist or deleted, please reload your list to continue");
+			}
+			oldCertificate.setCertificatedName(certificate.getCertificatedName());
+			oldCertificate.setCertificatedRank(certificate.getCertificatedRank());
+			oldCertificate.setCertificatedDate(certificate.getCertificatedDate());
+			repository.saveOrUpdate(certificate);
+		}
+	}
 
-    @Override
-    public void delete(Certificate certificate) throws SQLException {
-        repository.delete(certificate);
-    }
+	@Override
+	public void delete(Certificate certificate) throws SQLException {
+		repository.delete(certificate);
+	}
 
-    @Override
-    public Certificate get(String certificateID) throws SQLException {
-        return repository.get(certificateID);
-    }
+	@Override
+	public Certificate get(String certificateID) throws SQLException {
+		return repository.get(certificateID);
+	}
 
-    @Override
-    public List<Certificate> getCertificatesByCandidate(Candidate candidate) throws SQLException {
-        return repository.getCertificatesByCandidate(candidate);
-    }
+	@Override
+	public List<Certificate> getCertificatesByCandidate(Candidate candidate) throws SQLException {
+		return repository.getCertificatesByCandidate(candidate);
+	}
 
 }

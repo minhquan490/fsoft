@@ -53,20 +53,20 @@ public class MainPanel {
 				List<Intern> interns = new ArrayList<>();
 				List<Experience> experiences = new ArrayList<>();
 				List<Fresher> freshers = new ArrayList<>();
-				candidates.forEach((c) -> {
-					if (c instanceof Intern) {
-						Intern intern = (Intern) c;
+				for (Candidate candidate : candidates) {
+					if (candidate instanceof Intern) {
+						Intern intern = (Intern) candidate;
 						interns.add(intern);
 					}
-					if (c instanceof Experience) {
-						Experience experience = (Experience) c;
+					if (candidate instanceof Experience) {
+						Experience experience = (Experience) candidate;
 						experiences.add(experience);
 					}
-					if (c instanceof Fresher) {
-						Fresher fresher = (Fresher) c;
+					if (candidate instanceof Fresher) {
+						Fresher fresher = (Fresher) candidate;
 						freshers.add(fresher);
 					}
-				});
+				}
 				if (!interns.isEmpty()) {
 					InternController internController = InternController.init(new HashSet<>(interns));
 					internController.saveAll();
@@ -85,7 +85,11 @@ public class MainPanel {
 			break;
 		case 2:
 			candidates = CandidateController.init().getAll();
-			this.showCandidates((Candidate[]) candidates.toArray());
+			if (candidates.isEmpty()) {
+				System.out.println("No candidate in database");
+				return;
+			}
+			this.showCandidates(candidates.toArray(new Candidate[0]));
 			System.out.println("Do you want update ? Use indexes column");
 			System.out.println("Input index: ");
 			try {
@@ -108,13 +112,16 @@ public class MainPanel {
 				}
 			} catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
 				System.out.println("Something wrong with your input !");
-				this.mainMenu();
 			}
 			break;
 		case 3:
 			candidates = CandidateController.init().getAll();
-			this.showCandidates((Candidate[]) candidates.toArray());
-			System.out.println("Do you want update ? Use indexes column");
+			if (candidates.isEmpty()) {
+				System.out.println("No candidate in database");
+				return;
+			}
+			this.showCandidates(candidates.toArray(new Candidate[0]));
+			System.out.println("Do you want delete ? Use indexes column");
 			System.out.println("Input index: ");
 			try {
 				int index = Integer.parseInt(in.nextLine().trim());
@@ -139,14 +146,17 @@ public class MainPanel {
 				}
 			} catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
 				System.out.println("Something wrong with your input !");
-				this.mainMenu();
 			}
 			break;
 		case 4:
 			candidates = CandidateController.init().getAllCandidateAndTheirCertidicate();
+			if (candidates.isEmpty()) {
+				System.out.println("No candidate in database");
+				return;
+			}
 			candidates.sort(Comparator.nullsLast(Comparator.comparingInt(Candidate::getCandidateType).reversed()
 					.thenComparing(Candidate::getBirthDate)));
-			this.showCandidates((Candidate[]) candidates.toArray());
+			this.showCandidates(candidates.toArray(new Candidate[0]));
 			try {
 				int yourChoice = this.showCandidateForAddCertificate(candidates);
 				if (yourChoice < 1 && yourChoice > 3) {
@@ -244,13 +254,7 @@ public class MainPanel {
 		}
 		certificate.setCandidate(candidate);
 		certificates.add(certificate);
-		System.out.println("Would you like to add another certificate ? Y/n");
-		if (in.nextLine().trim().equalsIgnoreCase("n")) {
-			return certificates;
-		} else {
-			return getInfoOfCertificate(candidate, certificates);
-		}
-
+		return certificates;
 	}
 
 	private int showCandidateForAddCertificate(Collection<Candidate> candidates) {
@@ -281,27 +285,29 @@ public class MainPanel {
 
 	private Candidate showCandidateForEdit(Candidate candidate) throws SQLException {
 		System.out.println("Enter candidate's name (enter to skip): ");
-		candidate.setFullName(in.nextLine().trim().isEmpty() ? candidate.getFullName() : in.nextLine().trim());
+		String name = in.nextLine().trim();
+		candidate.setFullName(name.isEmpty() ? candidate.getFullName() : name);
 		System.out.println("Enter candidate's birth date (enter to skip): ");
 		try {
-			candidate.setBirthDate(in.nextLine().trim().isEmpty() ? candidate.getBirthDate()
-					: Validator.checkInvalidDate(in.nextLine().trim()));
+			String birthDate = in.nextLine().trim();
+			candidate.setBirthDate(
+					birthDate.isEmpty() ? candidate.getBirthDate() : Validator.checkInvalidDate(birthDate));
 		} catch (BirthDateException e) {
 			System.out.println(e.getMessage());
 			candidate.setBirthDate(Date.valueOf(LocalDate.now()));
 		}
 		System.out.println("Enter canidate's phone (enter to skip): ");
 		try {
-			candidate.setPhone(
-					in.nextLine().trim().isEmpty() ? candidate.getPhone() : Validator.checkPhone(in.nextLine().trim()));
+			String phone = in.nextLine().trim();
+			candidate.setPhone(phone.isEmpty() ? candidate.getPhone() : Validator.checkPhone(phone));
 		} catch (PhoneException e) {
 			System.out.println(e.getMessage());
 			candidate.setPhone("0000000000");
 		}
 		System.out.println("Enter candidate's email: ");
 		try {
-			candidate.setEmail(in.nextLine().trim().isEmpty() ? candidate.getEmail()
-					: Validator.checkInvalidEmail(in.nextLine().trim()));
+			String email = in.nextLine().trim();
+			candidate.setEmail(email.isEmpty() ? candidate.getEmail() : Validator.checkInvalidEmail(email));
 		} catch (EmailException e) {
 			System.out.println(e.getMessage());
 			StringBuilder builder = new StringBuilder(UUID.randomUUID().toString());
@@ -310,6 +316,10 @@ public class MainPanel {
 		if (candidate.getCandidateType() == 0) {
 			ExperienceController experienceController = ExperienceController.init();
 			Experience experience = experienceController.getByID(candidate.getCandidateID());
+			experience.setFullName(candidate.getFullName());
+			experience.setBirthDate(candidate.getBirthDate());
+			experience.setEmail(candidate.getEmail());
+			experience.setPhone(candidate.getPhone());
 			System.out.println("Enter exp in year (enter to skip): ");
 			try {
 				float expInYear = Float.parseFloat(in.nextLine().trim());
@@ -329,6 +339,10 @@ public class MainPanel {
 		if (candidate.getCandidateType() == 1) {
 			FresherController fresherController = FresherController.init();
 			Fresher fresher = fresherController.getByID(candidate.getCandidateID());
+			fresher.setFullName(candidate.getFullName());
+			fresher.setBirthDate(candidate.getBirthDate());
+			fresher.setEmail(candidate.getEmail());
+			fresher.setPhone(candidate.getPhone());
 			System.out.println("Enter new graduation date (enter to skip)");
 			try {
 				String graduationDate = in.nextLine().trim();
@@ -354,10 +368,14 @@ public class MainPanel {
 		if (candidate.getCandidateType() == 2) {
 			InternController internController = InternController.init();
 			Intern intern = internController.getByID(candidate.getCandidateID());
+			intern.setFullName(candidate.getFullName());
+			intern.setBirthDate(candidate.getBirthDate());
+			intern.setEmail(candidate.getEmail());
+			intern.setPhone(candidate.getPhone());
 			System.out.println("Enter major (enter to skip): ");
 			String major = in.nextLine().trim();
 			intern.setMajor(major.isEmpty() ? intern.getMajor() : major);
-			System.err.println("Enter semester (enter to skip): ");
+			System.out.println("Enter semester (enter to skip): ");
 			try {
 				int semester = Integer.parseInt(in.nextLine().trim());
 				intern.setSemester(semester > 0 ? semester : 1);
@@ -488,8 +506,8 @@ public class MainPanel {
 				} catch (NumberFormatException e) {
 					System.out.println("Wrong format !");
 					experience.setProSkill(1);
-
 				}
+				candidates.add(experience);
 			}
 			if (type.equals("1")) {
 				Fresher fresher = Fresher.of(candidate);
@@ -514,7 +532,7 @@ public class MainPanel {
 				Intern intern = Intern.of(candidate);
 				System.out.println("Enter major: ");
 				intern.setMajor(in.nextLine().trim());
-				System.err.println("Enter semester: ");
+				System.out.println("Enter semester: ");
 				try {
 					int semester = Integer.parseInt(in.nextLine().trim());
 					intern.setSemester(semester > 0 ? semester : 1);
@@ -528,10 +546,6 @@ public class MainPanel {
 		} catch (NumberFormatException e) {
 			System.out.println("Wrong type !");
 			candidate.setCandidateType(-1);
-		}
-		System.out.println("Do you want add another candidate ? Y/n");
-		if (in.nextLine().trim().equalsIgnoreCase("Y")) {
-			createCandidate(candidates);
 		}
 		return candidates;
 	}
