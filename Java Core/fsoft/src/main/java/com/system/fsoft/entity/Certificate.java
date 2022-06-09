@@ -6,6 +6,7 @@ import java.util.Objects;
 
 @SuppressWarnings("serial")
 public class Certificate implements Serializable {
+
 	private String certificatedID;
 	private String certificatedName;
 	private String certificatedRank;

@@ -4,11 +4,17 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.system.fsoft.entity.Experience;
 import com.system.fsoft.service.ExperienceService;
 import com.system.fsoft.service.impl.ExperienceServiceImpl;
 
 public class ExperienceController {
+
+	private static Logger log = LogManager.getLogger(ExperienceController.class.getName());
+
 	private Set<Experience> experiences;
 	private ExperienceService service = new ExperienceServiceImpl();
 	private Experience experience;
@@ -25,23 +31,23 @@ public class ExperienceController {
 	}
 
 	public static ExperienceController init() {
+		log.info("Experience controller is created");
 		return new ExperienceController();
 	}
 
 	public static ExperienceController init(Set<Experience> experiences) {
+		log.info("Experience controller with set experience is created");
 		return new ExperienceController(experiences);
 	}
 
 	public static ExperienceController init(Experience experience) {
+		log.info("Experience controller with single experience is created");
 		return new ExperienceController(experience);
 	}
 
 	public void saveAll() throws SQLException {
-		if (this.experiences == null) {
-			System.out.println("Why it null ?");
-		}
-		for (Experience experience : experiences) {
-			service.save(experience);
+		for (Experience e : experiences) {
+			service.save(e);
 		}
 	}
 

@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.system.fsoft.config.database.DataSource;
 import com.system.fsoft.entity.Fresher;
 import com.system.fsoft.repository.CandidateRepository;
@@ -15,19 +18,17 @@ import com.system.fsoft.utils.IDGenerator;
 
 public class FresherRepositoryImpl implements FresherRepository {
 
+	private final Logger log = LogManager.getLogger(FresherRepositoryImpl.class.getName());
+
 	private CandidateRepository candidateRepository;
 
 	private static final String INSERT_QUERY = "INSERT INTO Fresher(Candidate_ID, Graduation_Day, Graduation_Rank, Education) VALUES (?,?,?,?)";
 	private static final String INSERT_CANDIDATE = "INSERT INTO Candidate(Candidate_ID, Full_Name, Birth_Day, Phone, Email, Candidate_Type) VALUES (?,?,?,?,?,?)";
-
 	private static final String DELETE_QUERY = "DELETE FROM Candidate WHERE Candidate_ID = ?";
-
 	private static final String UPDATE_QUERY = "UPDATE Fresher SET Graduation_Day = ?, Graduation_Rank = ?, Education = ? WHERE Candidate_ID = ?";
 	private static final String UPDATE_CANDIDATE = "UPDATE Candidate SET Full_Name = ?, Birth_Day = ?, Phone = ?, Email = ?, Candidate_Type = ? WHERE Candidate_ID = ?";
-
 	private static final String SELECT_TO_INSET_OR_UPDATE_QUERY = "SELECT * FROM Fresher e WHERE e.Candidate_ID = ?";
 	private static final String SELECT_CANDIDATE_TO_INSERT_OR_UPDATE = "SELECT * FROM Candidate c WHERE c.Candidate_ID = ?";
-
 	private static final String SELECT_QUERY_BY_NAME = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Graduation_Day, e.Graduation_Rank, e.Education FROM Fresher e"
 			+ " RIGHT JOIN Candidate c ON c.Candidate_ID = e.Candidate_ID" + " WHERE c.Candidate_Name = ?";
 	private static final String SELECT_QUERY_BY_ID = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Graduation_Day, e.Graduation_Rank, e.Education FROM Fresher AS e"
@@ -48,11 +49,17 @@ public class FresherRepositoryImpl implements FresherRepository {
 			statement.setString(3, fresher.getGraduationRank());
 			statement.setString(4, fresher.getEducation());
 			Thread.sleep(200);
-			statement.executeUpdate();
-			System.out.println("Insert success");
-		} catch (Exception e) {
+			if (statement.executeUpdate() == 1) {
+				log.info("Save success");
+			} else {
+				log.debug("Something wrong when calling FresherRepository.save()");
+			}
+		} catch (SQLException | InterruptedException e) {
+			if (e instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at FresherRepository.save() " + e.getMessage(), e);
 		}
 	}
 
@@ -67,11 +74,17 @@ public class FresherRepositoryImpl implements FresherRepository {
 			statement.setString(3, fresher.getCandidateID());
 			statement.setDate(4, fresher.getGraduationDate());
 			Thread.sleep(200);
-			statement.executeUpdate();
-			System.out.println("Insert success");
-		} catch (Exception e) {
+			if (statement.executeUpdate() == 1) {
+				log.info("Edit success");
+			} else {
+				log.debug("Something wrong when calling FresherRepository.edit()");
+			}
+		} catch (SQLException | InterruptedException e) {
+			if (e instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at FresherRepository.edit() " + e.getMessage(), e);
 		}
 	}
 
@@ -82,11 +95,11 @@ public class FresherRepositoryImpl implements FresherRepository {
 					PreparedStatement statement = connection.prepareStatement(DELETE_QUERY);) {
 				statement.setString(1, fresher.getCandidateID());
 				if (statement.executeUpdate() == 1) {
-					System.out.println("Delete success");
+					log.info("Delete success");
 				}
-			} catch (Exception e) {
+			} catch (SQLException e) {
 				System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-				e.printStackTrace();
+				log.error(() -> "Problem at FresherRepository.delete() " + e.getMessage(), e);
 			}
 		} else {
 			System.out.println("Candidate not exist");
@@ -108,12 +121,13 @@ public class FresherRepositoryImpl implements FresherRepository {
 					resultSet.updateString(4, fresher.getEducation());
 					Thread.sleep(200);
 					resultSet.updateRow();
-					System.out.println("Update success");
-				} catch (Exception e) {
-					e.printStackTrace();
+					log.info("Update success");
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch (SQLException | InterruptedException e) {
+				if (e instanceof InterruptedException) {
+					Thread.currentThread().interrupt();
+				}
+				log.error(() -> "Problem at FresherRepository.saveOrUpdate() " + e.getMessage(), e);
 			}
 		} else {
 			String selectInsertQuery = SELECT_CANDIDATE_TO_INSERT_OR_UPDATE.substring(0,
@@ -132,12 +146,13 @@ public class FresherRepositoryImpl implements FresherRepository {
 					resultSet.updateString(4, fresher.getEducation());
 					Thread.sleep(200);
 					resultSet.insertRow();
-					System.out.println("Insert success");
-				} catch (Exception e) {
-					e.printStackTrace();
+					log.info("Insert success");
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (SQLException | InterruptedException e) {
+				if (e instanceof InterruptedException) {
+					Thread.currentThread().interrupt();
+				}
+				log.error(() -> "Problem at FresherRepository.saveOrUpdate() " + e.getMessage(), e);
 			}
 		}
 	}
@@ -161,13 +176,10 @@ public class FresherRepositoryImpl implements FresherRepository {
 					fresher.setEducation(resultSet.getString("Education"));
 				}
 				return fresher;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at FresherRepository.getByID() " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -191,13 +203,10 @@ public class FresherRepositoryImpl implements FresherRepository {
 					fresher.setEducation(resultSet.getString("Education"));
 				}
 				return fresher;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at FresherRepository.getByName() " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -224,7 +233,7 @@ public class FresherRepositoryImpl implements FresherRepository {
 			return freshers;
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at FresherRepository.getAll() " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -250,13 +259,10 @@ public class FresherRepositoryImpl implements FresherRepository {
 					freshers.add(fresher);
 				}
 				return freshers;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
 			}
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at FresherRepository.getFreshersByRank() " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -282,14 +288,10 @@ public class FresherRepositoryImpl implements FresherRepository {
 					freshers.add(fresher);
 				}
 				return freshers;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
 			}
-
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at FresherRepository.getFreshersByUniversity() " + e.getMessage(), e);
 			return null;
 		}
 	}

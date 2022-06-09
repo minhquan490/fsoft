@@ -8,6 +8,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.system.fsoft.config.database.DataSource;
 import com.system.fsoft.entity.Experience;
 import com.system.fsoft.repository.CandidateRepository;
@@ -15,6 +18,8 @@ import com.system.fsoft.repository.ExperienceRepository;
 import com.system.fsoft.utils.IDGenerator;
 
 public class ExperienceRepositoryImpl implements ExperienceRepository {
+
+	private final Logger log = LogManager.getLogger(ExperienceRepositoryImpl.class.getName());
 
 	private CandidateRepository candidateRepository;
 
@@ -33,7 +38,7 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
 			+ " RIGHT JOIN Candidate c ON c.Candidate_ID = e.Candidate_ID" + " WHERE c.Candidate_Name = ?";
 	private static final String SELECT_QUERY_BY_ID = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Exp_In_Year, e.Pro_Skill FROM Experience e"
 			+ " RIGHT JOIN Candidate c ON c.Candidate_ID = e.Candidate_ID" + " WHERE c.Candidate_ID = ?";
-	private static final String SELECT_ALL = "SELECT * FROM Candidate c FULL JOIN Experience e ON c.Candidate_ID = e.Candidate_ID ORDER BY c.Full_Name";
+	private static final String SELECT_ALL = "SELECT * FROM Experience e LEFT JOIN Candidate c ON c.Candidate_ID = e.Candidate_ID ORDER BY c.Full_Name";
 	private static final String SELECT_BY_EXP = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Pro_Skill FROM Candidate c LEFT JOIN Experience e WHERE e.Exp_In_Year = ? ORDER BY c.Full_Name";
 	private static final String SELECT_BY_SKILL = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Exp_In_Year FROM Candidate c LEFT JOIN Experience e WHERE e.Pro_Skill = ? ORDER BY c.Full_Name";
 
@@ -51,11 +56,17 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
 			statement.setBigDecimal(2, new BigDecimal(String.valueOf(experience.getExpInYear())));
 			statement.setInt(3, experience.getProSkill());
 			Thread.sleep(200);
-			statement.executeUpdate();
-			System.out.println("Insert success");
-		} catch (Exception e) {
+			if (statement.executeUpdate() == 1) {
+				log.info("Save success");
+			} else {
+				log.debug("Something wrong when calling ExperienceRepository.save()");
+			}
+		} catch (SQLException | InterruptedException e) {
+			if (e instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at ExperienceRepository.save(): " + e.getMessage(), e);
 		}
 	}
 
@@ -70,11 +81,17 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
 				statement.setInt(2, experience.getProSkill());
 				statement.setString(3, experience.getCandidateID());
 				Thread.sleep(200);
-				statement.executeUpdate();
-				System.out.println("Update success");
-			} catch (Exception e) {
+				if (statement.executeUpdate() == 1) {
+					log.info("Update success");
+				} else {
+					log.debug("Something wrong when calling ExperienceRepository.edit()");
+				}
+			} catch (SQLException | InterruptedException e) {
+				if (e instanceof InterruptedException) {
+					Thread.currentThread().interrupt();
+				}
 				System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-				e.printStackTrace();
+				log.error(() -> "Problem at ExperienceRepository.edit(): " + e.getMessage(), e);
 			}
 		}
 	}
@@ -94,14 +111,13 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
 					resultSet.updateInt(3, experience.getProSkill());
 					Thread.sleep(200);
 					resultSet.updateRow();
-					System.out.println("Update success");
-				} catch (Exception e) {
-					e.printStackTrace();
-					System.out.println("Save failure");
+					log.info("Update success");
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				System.out.println("Save failure");
+			} catch (SQLException | InterruptedException e) {
+				if (e instanceof InterruptedException) {
+					Thread.currentThread().interrupt();
+				}
+				log.error(() -> "Problem at ExperienceRepository.saveOrUpdate() " + e.getMessage(), e);
 			}
 
 		} else {
@@ -120,16 +136,14 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
 					resultSet.updateInt(3, experience.getProSkill());
 					Thread.sleep(200);
 					resultSet.insertRow();
-					System.out.println("Insert success");
-				} catch (SQLException e) {
-					e.printStackTrace();
+					log.info("Insert success");
 				}
-
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				Thread.currentThread().interrupt();
+			} catch (SQLException | InterruptedException e) {
+				if (e instanceof InterruptedException) {
+					Thread.currentThread().interrupt();
+				}
+				log.error(() -> "Problem at ExperienceRepository.saveOrUpdate() " + e.getMessage(), e);
 			}
-
 		}
 	}
 
@@ -140,11 +154,13 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
 					PreparedStatement statement = connection.prepareStatement(DELETE_QUERY);) {
 				statement.setString(1, experience.getCandidateID());
 				if (statement.executeUpdate() == 1) {
-					System.out.println("Delete success");
+					log.info("Delete success");
+				} else {
+					log.debug("Something wrong when calling ExperienceRepository.delete()");
 				}
-			} catch (Exception e) {
+			} catch (SQLException e) {
 				System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-				e.printStackTrace();
+				log.error(() -> "Problem at ExperienceRepository.delete(): " + e.getMessage(), e);
 			}
 		} else {
 			System.out.println("Candidate not exist");
@@ -169,13 +185,10 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
 					experience.setProSkill(resultSet.getInt("Pro_Skill"));
 				}
 				return experience;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at ExperienceRepository.getByID(): " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -198,13 +211,10 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
 					experience.setProSkill(resultSet.getInt("Pro_Skill"));
 				}
 				return experience;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
 			}
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at ExperienceRepository.getByName(): " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -228,9 +238,9 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
 				experiences.add(experience);
 			}
 			return experiences;
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at ExperienceRepository.getAll(): " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -254,14 +264,11 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
 					experience.setProSkill(resultSet.getInt("Pro_Skill"));
 					experiences.add(experience);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
 			}
 			return experiences;
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at ExperienceRepository.getByExperience(): " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -285,13 +292,11 @@ public class ExperienceRepositoryImpl implements ExperienceRepository {
 					experience.setProSkill(resultSet.getInt("Pro_Skill"));
 					experiences.add(experience);
 				}
-			} catch (Exception e) {
-				return null;
 			}
 			return experiences;
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at ExperienceRepository.getByAdvancedSkills(): " + e.getMessage(), e);
 			return null;
 		}
 	}

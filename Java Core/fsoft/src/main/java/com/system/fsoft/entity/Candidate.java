@@ -2,9 +2,11 @@ package com.system.fsoft.entity;
 
 import java.io.Serializable;
 import java.sql.Date;
+import java.util.Objects;
 
 @SuppressWarnings("serial")
 public class Candidate implements Serializable {
+
 	private String candidateID;
 	private String fullName;
 	private Date birthDate;
@@ -82,16 +84,7 @@ public class Candidate implements Serializable {
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((birthDate == null) ? 0 : birthDate.hashCode());
-		result = prime * result + ((candidateID == null) ? 0 : candidateID.hashCode());
-		result = prime * result + candidateType;
-		result = prime * result + ((email == null) ? 0 : email.hashCode());
-		result = prime * result + ((fullName == null) ? 0 : fullName.hashCode());
-		result = prime * result + ((phone == null) ? 0 : phone.hashCode());
-		result = prime * result + totalCertificate;
-		return result;
+		return Objects.hash(birthDate, candidateID, candidateType, email, fullName, phone, totalCertificate);
 	}
 
 	@Override
@@ -103,41 +96,15 @@ public class Candidate implements Serializable {
 		if (getClass() != obj.getClass())
 			return false;
 		Candidate other = (Candidate) obj;
-		if (birthDate == null) {
-			if (other.birthDate != null)
-				return false;
-		} else if (!birthDate.equals(other.birthDate))
-			return false;
-		if (candidateID == null) {
-			if (other.candidateID != null)
-				return false;
-		} else if (!candidateID.equals(other.candidateID))
-			return false;
-		if (candidateType != other.candidateType)
-			return false;
-		if (email == null) {
-			if (other.email != null)
-				return false;
-		} else if (!email.equals(other.email))
-			return false;
-		if (fullName == null) {
-			if (other.fullName != null)
-				return false;
-		} else if (!fullName.equals(other.fullName))
-			return false;
-		if (phone == null) {
-			if (other.phone != null)
-				return false;
-		} else if (!phone.equals(other.phone))
-			return false;
-		if (totalCertificate != other.totalCertificate)
-			return false;
-		return true;
+		return Objects.equals(birthDate, other.birthDate) && Objects.equals(candidateID, other.candidateID)
+				&& candidateType == other.candidateType && Objects.equals(email, other.email)
+				&& Objects.equals(fullName, other.fullName) && Objects.equals(phone, other.phone)
+				&& totalCertificate == other.totalCertificate;
 	}
 
-	void showInfo() {
+	public void showInfo() {
 		System.out.println("Candidate ID: " + this.getCandidateID());
-		System.out.println("Candidate name: " + this.getEmail());
+		System.out.println("Candidate name: " + this.getFullName());
 		System.out.println("Candidate email: " + this.getEmail());
 		System.out.println("Candidate phone: " + this.getPhone());
 		System.out.println("Candidate birth day: " + this.getBirthDate());

@@ -2,20 +2,30 @@ package com.system.fsoft;
 
 import java.sql.SQLException;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.system.fsoft.exception.SystemInterruptedException;
-import com.system.fsoft.gui.MainPanel;
+import com.system.fsoft.gui.CandidateManagementApp;
 
 public class App {
+
+	static final Logger log = LogManager.getLogger(App.class.getName());
+
 	public static void main(String[] args) {
+
 		try {
-			MainPanel panel = MainPanel.createPanel();
-			panel.run();
+			CandidateManagementApp app = CandidateManagementApp.create();
+			app.run();
 		} catch (SystemInterruptedException e) {
 			System.out.println(e.getMessage());
-			e.getCause().printStackTrace();
-		} catch (SQLException e1) {
+			log.error("", e);
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e1.printStackTrace();
+			log.error("Problem at jbdc", e);
+		} catch (Exception e) {
+			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
+			log.error("", e);
 		}
 	}
 }

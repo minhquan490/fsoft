@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.system.fsoft.config.database.DataSource;
 import com.system.fsoft.entity.Intern;
 import com.system.fsoft.repository.CandidateRepository;
@@ -15,19 +18,17 @@ import com.system.fsoft.utils.IDGenerator;
 
 public class InternRepositoryImpl implements InternRepository {
 
+	private final Logger log = LogManager.getLogger(InternRepositoryImpl.class.getName());
+
 	private CandidateRepository candidateRepository;
 
 	private static final String INSERT_QUERY = "INSERT INTO Intern(Candidate_ID, Major, Semester, Education) VALUES (?,?,?,?)";
 	private static final String INSERT_CANDIDATE = "INSERT INTO Candidate(Candidate_ID, Full_Name, Birth_Day, Phone, Email, Candidate_Type) VALUES (?,?,?,?,?,?)";
-
 	private static final String DELETE_QUERY = "DELETE FROM Candidate WHERE Candidate_ID = ?";
-
 	private static final String UPDATE_QUERY = "UPDATE Intern SET Major = ?, Semester = ?, Education = ? WHERE Candidate_ID = ?";
 	private static final String UPDATE_CANDIDATE = "UPDATE Candidate SET Full_Name = ?, Birth_Day = ?, Phone = ?, Email = ?, Candidate_Type = ? WHERE Candidate_ID = ?";
-
 	private static final String SELECT_TO_INSET_OR_UPDATE_QUERY = "SELECT * FROM Intern e WHERE e.Candidate_ID = ?";
 	private static final String SELECT_CANDIDATE_TO_INSERT_OR_UPDATE = "SELECT * FROM Candidate c WHERE c.Candidate_ID = ?";
-
 	private static final String SELECT_QUERY_BY_NAME = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Major, e.Semester, e.Education FROM Intern e"
 			+ " RIGHT JOIN Candidate c ON c.Candidate_ID = e.Candidate_ID" + " WHERE c.Candidate_Name = ?";
 	private static final String SELECT_QUERY_BY_ID = "SELECT c.Candidate_ID, c.Full_Name, c.Birth_Day, c.Phone, c.Email, c.Candidate_Type, e.Major, e.Semester, e.Education FROM Intern e"
@@ -48,14 +49,17 @@ public class InternRepositoryImpl implements InternRepository {
 			statement.setInt(3, intern.getSemester());
 			statement.setString(4, intern.getUniversityName());
 			Thread.sleep(200);
-			statement.executeUpdate();
-			System.out.println("Insert success");
-		} catch (SQLException e) {
+			if (statement.executeUpdate() == 1) {
+				log.info("Save success");
+			} else {
+				log.debug("Something wrong when calling InternRepository.save()");
+			}
+		} catch (SQLException | InterruptedException e) {
+			if (e instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			Thread.currentThread().interrupt();
+			log.error(() -> "Problem at InternRepository.save() " + e.getMessage(), e);
 		}
 	}
 
@@ -70,11 +74,17 @@ public class InternRepositoryImpl implements InternRepository {
 			statement.setInt(3, intern.getSemester());
 			statement.setString(4, intern.getUniversityName());
 			Thread.sleep(200);
-			statement.executeUpdate();
-			System.out.println("Update success");
-		} catch (Exception e) {
+			if (statement.executeUpdate() == 1) {
+				log.info("Edit success");
+			} else {
+				log.debug("Something wrong when calling InternRepository.edit()");
+			}
+		} catch (SQLException | InterruptedException e) {
+			if (e instanceof InterruptedException) {
+				Thread.currentThread().interrupt();
+			}
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at InternRepository.edit() " + e.getMessage(), e);
 		}
 	}
 
@@ -85,11 +95,13 @@ public class InternRepositoryImpl implements InternRepository {
 					PreparedStatement statement = connection.prepareStatement(DELETE_QUERY);) {
 				statement.setString(1, intern.getCandidateID());
 				if (statement.executeUpdate() == 1) {
-					System.out.println("Delete success");
+					log.info("Delete success");
+				} else {
+					log.debug("Something wrong when calling InternRepository.delete()");
 				}
 			} catch (Exception e) {
 				System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-				e.printStackTrace();
+				log.error(() -> "Problem at InternRepository.edit() " + e.getMessage(), e);
 			}
 		} else {
 			System.out.println("Candidate not exist");
@@ -111,13 +123,14 @@ public class InternRepositoryImpl implements InternRepository {
 					resultSet.updateString(4, intern.getUniversityName());
 					Thread.sleep(200);
 					resultSet.updateRow();
-					System.out.println("Update success");
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+					log.info("Update success");
+				}
+			} catch (SQLException | InterruptedException e) {
+				if (e instanceof InterruptedException) {
 					Thread.currentThread().interrupt();
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+				System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
+				log.error(() -> "Problem at InternRepository.saveOrUpdate() " + e.getMessage(), e);
 			}
 
 		} else {
@@ -138,12 +151,14 @@ public class InternRepositoryImpl implements InternRepository {
 					resultSet.updateString(4, intern.getUniversityName());
 					Thread.sleep(200);
 					resultSet.insertRow();
-					System.out.println("Insert success");
-				} catch (InterruptedException e) {
-					e.printStackTrace();
+					log.info("Insert success");
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
+			} catch (SQLException | InterruptedException e) {
+				if (e instanceof InterruptedException) {
+					Thread.currentThread().interrupt();
+				}
+				System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
+				log.error(() -> "Problem at InternRepository.saveOrUpdate() " + e.getMessage(), e);
 			}
 		}
 	}
@@ -167,13 +182,10 @@ public class InternRepositoryImpl implements InternRepository {
 					intern.setUniversityName(resultSet.getString("Education"));
 				}
 				return intern;
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return null;
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at InternRepository.getByID() " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -197,13 +209,10 @@ public class InternRepositoryImpl implements InternRepository {
 					intern.setUniversityName(resultSet.getString("Education"));
 				}
 				return intern;
-			} catch (SQLException e) {
-				e.printStackTrace();
-				return null;
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at InternRepository.getByName() " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -228,9 +237,9 @@ public class InternRepositoryImpl implements InternRepository {
 				interns.add(intern);
 			}
 			return interns;
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at InternRepository.getAll() " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -255,13 +264,11 @@ public class InternRepositoryImpl implements InternRepository {
 					intern.setUniversityName(resultSet.getString("Education"));
 					interns.add(intern);
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
 			return interns;
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at InternRepository.getByMajor() " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -287,13 +294,11 @@ public class InternRepositoryImpl implements InternRepository {
 					intern.setUniversityName(resultSet.getString("Education"));
 					interns.add(intern);
 				}
-			} catch (SQLException e) {
-				e.printStackTrace();
 			}
 			return interns;
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at InternRepository.getByMajor() " + e.getMessage(), e);
 			return null;
 		}
 	}

@@ -4,11 +4,16 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.system.fsoft.entity.Fresher;
 import com.system.fsoft.service.FresherService;
 import com.system.fsoft.service.impl.FresherServiceImpl;
 
 public class FresherController {
+
+	private static Logger log = LogManager.getLogger(FresherController.class.getName());
 
 	private Set<Fresher> freshers;
 	private FresherService service = new FresherServiceImpl();
@@ -26,14 +31,17 @@ public class FresherController {
 	}
 
 	public static FresherController init() {
+		log.info("Fresher controller is created");
 		return new FresherController();
 	}
 
 	public static FresherController init(Set<Fresher> freshers) {
+		log.info("Fresher controller with set fresher is created");
 		return new FresherController(freshers);
 	}
 
 	public static FresherController init(Fresher fresher) {
+		log.info("Fresher controller with single fresher is created");
 		return new FresherController(fresher);
 	}
 

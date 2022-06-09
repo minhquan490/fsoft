@@ -4,11 +4,16 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.system.fsoft.entity.Intern;
 import com.system.fsoft.service.InternService;
 import com.system.fsoft.service.impl.InternServiceImpl;
 
 public class InternController {
+
+	private static Logger log = LogManager.getLogger(InternController.class.getName());
 
 	private Set<Intern> interns;
 	private InternService service = new InternServiceImpl();
@@ -26,14 +31,17 @@ public class InternController {
 	}
 
 	public static InternController init() {
+		log.info("Intern controller is created");
 		return new InternController();
 	}
 
 	public static InternController init(Set<Intern> interns) {
+		log.info("Intern controller with set inten is created");
 		return new InternController(interns);
 	}
 
 	public static InternController init(Intern intern) {
+		log.info("Intern controller with single intern is created");
 		return new InternController(intern);
 	}
 

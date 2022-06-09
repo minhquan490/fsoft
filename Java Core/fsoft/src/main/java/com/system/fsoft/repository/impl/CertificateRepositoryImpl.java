@@ -7,6 +7,9 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.system.fsoft.config.database.DataSource;
 import com.system.fsoft.entity.Candidate;
 import com.system.fsoft.entity.Certificate;
@@ -15,30 +18,30 @@ import com.system.fsoft.utils.IDGenerator;
 
 public class CertificateRepositoryImpl implements CertificateRepository {
 
+	private final Logger log = LogManager.getLogger(CertificateRepository.class.getName());
+
 	private static final String INSERT_QUERY = "INSERT INTO Certificate(Certificate_ID, Certificate_Name, Certificate_Rank, Certificate_Date, Candidate_ID) VALUES (?,?,?,?,?)";
-
 	private static final String UPDATE_QUERY = "UPDATE Certificate SET Certificate_Name = ?, Certificate_Rank = ?, Certificate_Date = ? WHERE Certificate_ID = ?";
-
 	private static final String DELETE_QUERY = "DELETE FROM Certificate WHERE Certificate_ID = ?";
-
 	private static final String SELECT_QUERY = "SELECT ce.Certificate_Name, ce.Certificate_Rank, ce.Certificate_Date FROM Certificate ce WHERE ce.Certificate_ID = ?";
 	private static final String SELECT_ALL_CERTIFICATES = "SELECT * FROM Certificate ce WHERE ce.Candidate_ID = ?";
 
 	@Override
 	public void saveOrUpdate(Certificate certificate) throws SQLException {
-		if (this.get(certificate.getCandidateID()) != null) {
+		if (certificate.getCertificatedID() != null) {
 			try (Connection connection = DataSource.getConnection();
 					PreparedStatement statement = connection.prepareStatement(UPDATE_QUERY);) {
-				statement.setString(1, certificate.getCertificatedID());
-				statement.setString(2, certificate.getCertificatedName());
-				statement.setString(3, certificate.getCertificatedRank());
-				statement.setDate(4, certificate.getCertificatedDate());
-				statement.setString(5, certificate.getCandidateID());
+				statement.setString(1, certificate.getCertificatedName());
+				statement.setString(2, certificate.getCertificatedRank());
+				statement.setDate(3, certificate.getCertificatedDate());
+				statement.setString(4, certificate.getCandidateID());
 				if (statement.executeUpdate() == 1) {
-					System.out.println("Insert success");
+					log.info("update success");
+				} else {
+					log.debug("Something wrong at CertificateRepository.saveOrUpdate()");
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
+			} catch (SQLException e) {
+				log.error(() -> "Problem at CertificateRepository.saveOrUpdate(): " + e.getMessage(), e);
 			}
 		} else {
 			certificate.setCertificatedID(IDGenerator.scan(certificate).toString());
@@ -50,10 +53,12 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 				statement.setDate(4, certificate.getCertificatedDate());
 				statement.setString(5, certificate.getCandidateID());
 				if (statement.executeUpdate() == 1) {
-					System.out.println("Update success");
+					log.info("Save success");
+				} else {
+					log.debug("Something wrong at CertificateRepository.saveOrUpdate()");
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				log.error(() -> "Problem at CertificateRepository.saveOrUpdate(): " + e.getMessage(), e);
 			}
 		}
 	}
@@ -65,11 +70,13 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 					PreparedStatement statement = connection.prepareStatement(DELETE_QUERY);) {
 				statement.setString(1, certificate.getCertificatedID());
 				if (statement.executeUpdate() == 1) {
-					System.out.println("Delete success");
+					log.info("Delete success");
+				} else {
+					log.debug("Something wrong at CertificateRepository.delete()");
 				}
 			} catch (Exception e) {
 				System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-				e.printStackTrace();
+				log.error(() -> "Problem at CertificateRepository.delete(): " + e.getMessage(), e);
 			}
 		} else {
 			System.out.println("Certificatie not exist");
@@ -89,13 +96,10 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 					certificate.setCertificatedDate(resultSet.getDate("Certificate_Date"));
 				}
 				return certificate;
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
 			}
-		} catch (Exception e) {
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at CertificateRepository.get(): " + e.getMessage(), e);
 			return null;
 		}
 	}
@@ -115,14 +119,11 @@ public class CertificateRepositoryImpl implements CertificateRepository {
 					certificate.setCertificatedDate(resultSet.getDate("Certificate_Date"));
 					certificates.add(certificate);
 				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				return null;
 			}
 			return certificates;
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error(() -> "Problem at CertificateRepository.getCertificatesByCandidate(): " + e.getMessage(), e);
 			return null;
 		}
 	}

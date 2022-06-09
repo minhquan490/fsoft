@@ -7,11 +7,16 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.system.fsoft.config.database.DataSource;
 import com.system.fsoft.entity.Candidate;
 import com.system.fsoft.repository.CandidateRepository;
 
 public class CandidateRepositoryImpl implements CandidateRepository {
+
+	private final Logger log = LogManager.getLogger(CandidateRepositoryImpl.class.getName());
 
 	private Candidate candidate;
 	private String query;
@@ -37,10 +42,14 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 			statement.setString(4, this.candidate.getPhone());
 			statement.setString(5, this.candidate.getEmail());
 			statement.setInt(6, this.candidate.getCandidateType());
-			statement.executeUpdate();
-		} catch (Exception e) {
+			if (statement.executeUpdate() == 1) {
+				log.info("Save Candidate success");
+			} else {
+				log.debug("Something wrong");
+			}
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error("Error at CandidateRepository.save()", e);
 		}
 	}
 
@@ -54,10 +63,14 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 			statement.setString(4, this.candidate.getEmail());
 			statement.setInt(5, this.candidate.getCandidateType());
 			statement.setString(6, this.candidate.getCandidateID());
-			statement.executeUpdate();
-		} catch (Exception e) {
+			if (statement.executeUpdate() == 1) {
+				log.info("Edit Candidate success");
+			} else {
+				log.debug("Something wrong");
+			}
+		} catch (SQLException e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error("Error at CandidateRepository.edit()", e);
 		}
 	}
 
@@ -68,6 +81,7 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 				this.edit();
 			} catch (Exception e) {
 				System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
+				log.error("Problem at CandidateRepository.run() when execute update statement", e);
 			}
 		}
 		if (query.contains("INSERT INTO")) {
@@ -75,6 +89,7 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 				this.save();
 			} catch (Exception e) {
 				System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
+				log.error("Problem at CandidateRepository.run() when execute insert statement", e);
 			}
 		}
 		if (query.contains("SELECT")) {
@@ -86,6 +101,7 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 				}
 			} catch (Exception e) {
 				System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
+				log.error("Problem at CandidateRepository.run() when execute select statement", e);
 			}
 		}
 	}
@@ -104,10 +120,10 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 			resultSet.updateString(5, candidate.getEmail());
 			resultSet.updateInt(6, candidate.getCandidateType());
 			resultSet.insertRow();
-			System.out.println("Insert success");
+			log.info("Insert success");
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error("Problem at CandidateRepository.saveViaResultSet()", e);
 		}
 	}
 
@@ -124,13 +140,11 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 				resultSet.updateString(5, candidate.getEmail());
 				resultSet.updateInt(6, candidate.getCandidateType());
 				resultSet.updateRow();
-				System.out.println("Update success");
-			} catch (Exception e) {
-				e.printStackTrace();
+				log.info("Edit success");
 			}
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error("Problem at CandidateRepository.editViaResulSet()", e);
 		}
 	}
 
@@ -151,7 +165,7 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 			return candidates;
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error("Problem at CandidateRepository.getAllCandidateAndTheirCertidicate()", e);
 			return null;
 		}
 	}
@@ -163,19 +177,19 @@ public class CandidateRepositoryImpl implements CandidateRepository {
 				PreparedStatement statement = connection.prepareStatement(SELECT_ALL);
 				ResultSet resultSet = statement.executeQuery();) {
 			while (resultSet.next()) {
-				Candidate candidate = new Candidate();
-				candidate.setCandidateID(resultSet.getString("Candidate_ID"));
-				candidate.setBirthDate(resultSet.getDate("Birth_Day"));
-				candidate.setPhone(resultSet.getString("Phone"));
-				candidate.setEmail(resultSet.getString("Email"));
-				candidate.setFullName(resultSet.getString("Full_Name"));
-				candidate.setCandidateType(resultSet.getInt("Candidate_Type"));
-				candidates.add(candidate);
+				Candidate c = new Candidate();
+				c.setCandidateID(resultSet.getString("Candidate_ID"));
+				c.setBirthDate(resultSet.getDate("Birth_Day"));
+				c.setPhone(resultSet.getString("Phone"));
+				c.setEmail(resultSet.getString("Email"));
+				c.setFullName(resultSet.getString("Full_Name"));
+				c.setCandidateType(resultSet.getInt("Candidate_Type"));
+				candidates.add(c);
 			}
 			return candidates;
 		} catch (Exception e) {
 			System.out.println("The system has encountered an unexpected problem, sincerely sorry !!!");
-			e.printStackTrace();
+			log.error("Problem at CandidateRepository.getAll()", e);
 			return null;
 		}
 	}
