@@ -1,0 +1,44 @@
+:root {
+    font-size: 15px;
+    box-sizing: border-box;
+}
+
+.custom-width {
+    width: 100%;
+}
+
+.bg-product-info {
+    background-color: rgba(36, 178, 74, 0.2);
+}
+
+.custom-padding-left {
+    padding-left: 15px;
+}
+
+.custom-font {
+    font-size: 1.7rem;
+    color: #f27228;
+    font-weight: 900;
+}
+
+.custom-btn {
+    border-color: #D3F0DB;
+    background-color: #D3F0DB;
+    color: red;
+    font-weight: 900;
+}
+
+small>span{
+    color: red;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}

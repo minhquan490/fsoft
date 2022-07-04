@@ -1,0 +1,62 @@
+body {
+    min-height: 100vh;
+    height: 100vh;
+    background-color: #b7c7c4;
+}
+
+h3 {
+    margin: 0;
+    color: white;
+}
+
+.container {
+    height: 100%;
+}
+
+.navigation {
+    flex: 5;
+}
+
+.banner {
+    width: 100vw;
+    position: relative;
+    left: calc(-50vw + 51.35%);
+    flex: 40;
+}
+
+.sub-header {
+    flex: 5;
+}
+
+.content {
+    flex: 50;
+}
+
+.my-img {
+    flex: 2;
+}
+
+.sp-content {
+    flex: 1;
+}
+
+.banner,
+.my-img {
+    background-color: #29a38a;
+}
+
+.navigation,
+.sub-header,
+.sp-content {
+    background-color: #6d6f71;
+}
+
+.banner img {
+    width: 100px;
+    height: 100px;
+}
+
+.my-img img {
+    width: 50px;
+    height: 50px;
+}

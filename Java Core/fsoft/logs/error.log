@@ -1,0 +1,5 @@
+10/06/2022 09:52:38 ERROR com.system.fsoft.App - 
+java.util.NoSuchElementException: No line found
+	at java.util.Scanner.nextLine(Scanner.java:1651) ~[?:?]
+	at com.system.fsoft.gui.CandidateManagementApp.run(CandidateManagementApp.java:595) ~[classes/:?]
+	at com.system.fsoft.App.main(App.java:19) ~[classes/:?]

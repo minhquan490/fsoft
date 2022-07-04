@@ -1,0 +1,89 @@
+:root {
+    font-size: 10px;
+    box-sizing: border-box;
+    color: white;
+}
+
+html {
+    margin: 0;
+}
+
+body {
+    margin: 0;
+    width: 100vw;
+    height: 50vh;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+input {
+    outline: none;
+}
+
+.container {
+    background-color: #EBA102;
+    display: grid;
+    grid-template-columns: 20% 20% 60%;
+    grid-gap: 16px;
+    padding: 4px;
+    width: 60%;
+}
+
+.form {
+    width: calc(100% - 28px);
+    padding-bottom: 8px;
+}
+
+.header {
+    font-size: 1.6rem;
+    padding: 16px 0 16px 0;
+}
+
+.body {
+    text-align: justify;
+    font-size: 1.2rem;
+    line-height: 2rem;
+}
+
+.title {
+    padding-left: 8px;
+}
+
+.info {
+    display: flex;
+    justify-content: space-between;
+}
+
+.info>input {
+    height: 2.5rem;
+}
+
+.subject {
+    display: flex;
+    flex-direction: column;
+    padding-top: 16px;
+}
+
+.subject>input:first-child {
+    height: 3rem;
+}
+
+.subject>input:nth-child(2) {
+    height: 5rem;
+    margin-top: 8px;
+}
+
+.body>form>button {
+    margin-top: 16px;
+    height: 4.2rem;
+    border-radius: 0;
+    background-color: black;
+    color: white;
+    font-weight: 500;
+    border: none;
+}
+
+.body>form>button>span {
+    padding: 16px;
+}

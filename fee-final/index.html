@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./utils/all.min.css">
+    <link rel="stylesheet" href="./utils/bootstrap.css">
+    <link rel="stylesheet" href="./utils/jquery-data-table.min.css">
+    <link rel="stylesheet" href="./css/index.css">
+    <title>Document</title>
+</head>
+<body>
+    <div class="container-fluid form-top">
+        <form action="">
+            <h3>Thông tin cá nhân</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                      <label for="name">Họ và tên</label>
+                      <input type="text" class="form-control" placeholder="Họ và tên" id="name" autocomplete="false">
+                      <div class="invalid-mess">Please fill out this field.</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="birth-date">Ngày sinh</label>
+                      <input type="date" class="form-control" placeholder="MM/dd/yyyy" id="birth-date">
+                      <div class="invalid-mess">Please fill out this field.</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                      <label for="gender">Giới tính</label>
+                      <select class="form-control" id="gender">
+                        <option value="">-- Chọn Giới Tính ---</option>
+                        <option value="Nam">Nam</option>
+                        <option value="Nữ">Nữ</option>
+                      </select>
+                      <div class="invalid-mess">Please fill out this field.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <label for="address">Địa chỉ lưu trú</label>
+                        <input type="text" class="form-control" placeholder="Địa chỉ lưu trú" id="address" autocomplete="false">
+                        <div class="invalid-mess">Please fill out this field.</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="cccd">Số CCCD/CMND</label>
+                        <input type="text" class="form-control" placeholder="" id="cccd" autocomplete="false">
+                        <div class="invalid-mess">Please fill out this field.</div>
+                    </div>
+                </div>
+            </div>
+            <h3>Thông tin tiêm Vacxin</h3>
+            <div class="row align-items-md-center">
+                <div class="col-md-9">
+                    <div class="form-group">
+                        <span>Bạn đã tiêm vacxin nào ?</span>
+                        <div class="d-flex">
+                            <div class="custom-control custom-radio pr-3">
+                                <input type="radio" name="vacxin" id="none" value="" class="custom-control-input" checked>
+                                <label class="custom-control-label" for="none">None</label>
+                              </div>
+                              <div class="custom-control custom-radio pr-3">
+                                  <input type="radio" name="vacxin" id="plifzer" value="plifzer" class="custom-control-input">
+                                  <label class="custom-control-label" for="plifzer">Plifzer</label>
+                              </div>
+                              <div class="custom-control custom-radio pr-3">
+                                  <input type="radio" name="vacxin" id="astra" value="astra" class="custom-control-input">
+                                  <label class="custom-control-label" for="astra">AstraZeneca</label>
+                              </div>
+                              <div class="custom-control custom-radio pr-3">
+                                  <input type="radio" name="vacxin" id="vero" value="vero" class="custom-control-input">
+                                  <label class="custom-control-label" for="vero">Vero Cell</label>
+                              </div>
+                              <div class="custom-control custom-radio pr-3">
+                                  <input type="radio" name="vacxin" id="sput" value="sput" class="custom-control-input">
+                                  <label class="custom-control-label" for="sput">Sputnik V</label>
+                              </div>
+                        </div>
+                        <div class="invalid-mess">Please fill out this field.</div>
+                    </div>
+                </div>
+                <!-- <div class="col-md-3 vacxin-date">
+                    <div class="form-group">
+                      <label for="vacxin-date">Ngày tiêm</label>
+                      <input type="date" class="form-control" placeholder="MM/dd/yyyy" id="vacxin-date">
+                      <div class="invalid-mess">Please fill out this field.</div>
+                    </div>
+                </div> -->
+                <div class="col-md-3">
+                    <div class="form-group">
+                        <label for="number-vacxin">Số lượng mũi tiêm</label>
+                        <input type="text" class="form-control" placeholder="0" id="number-vacxin" autocomplete="false" >
+                        <div class="invalid-mess">Please fill out this field.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-3 ">
+                    <div class="form-group vacxin-date">
+                      <label for="vacxin-sl-1">Mũi 1</label>
+                      <input type="date" class="form-control" placeholder="MM/dd/yyyy" id="vacxin-sl-1">
+                      <div class="invalid-mess">Please fill out this field.</div>
+                    </div>
+                </div>
+                <div class="col-md-3 ">
+                    <div class="form-group vacxin-date">
+                      <label for="vacxin-sl-2">Mũi 2</label>
+                      <input type="date" class="form-control" placeholder="MM/dd/yyyy" id="vacxin-sl-2">
+                      <div class="invalid-mess">Please fill out this field.</div>
+                    </div>
+                </div>
+                <div class="col-md-3 ">
+                    <div class="form-group vacxin-date">
+                      <label for="vacxin-sl-3">Mũi 3</label>
+                      <input type="date" class="form-control" placeholder="MM/dd/yyyy" id="vacxin-sl-3">
+                      <div class="invalid-mess">Please fill out this field.</div>
+                    </div>
+                </div>
+            </div>
+            <div class="submit-btn">
+                <button class="btn btn-primary" id="add-btn"><i class="fas fa-plus"></i> Lưu thông tin</button>
+            </div>
+        </form>
+        <div class="table-bottom mt-4">
+            <table id="table" style="width: 100%;" class="table table-striped mt-4 display">
+             <!-- <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Lớp</th>
+                  <th scope="col">Môn</th>
+                  <th scope="col">Giảng Viên</th>
+                  <th scope="col">Topic</th>
+                  <th scope="col">Ngày Training/Mentor</th>
+                  <th scope="col">Hình thức</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody id="body-table-data">
+                 <tr>
+                  <th scope="row" class="row-num">1</th>
+                  <td>Mark</td>
+                  <td>Otto</td>
+                  <td>@mdo</td>
+                  <td>@mdo</td>
+                  <td>@mdo</td>
+                  <td>@mdo</td>
+                  <td><button class="btn btn-outline-danger"><i class="far fa-trash-alt"></i></button></td>
+                </tr> 
+              </tbody>-->
+            </table>
+            <div class="modal" tabindex="-1" role="dialog" id="confirm-modal">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Delete Confirm</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                      </button>
+                    </div>
+                    <div class="modal-body">
+                      <p>Are you sure delete this row?</p>
+                    </div>
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" id="remove-btn">Yes</button>
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">No</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+    </div>
+    <script src="./utils/jquery-3.3.1.js"></script>
+    <script src="./utils/all.min.js"></script>
+    <script src="./utils/bootstrap.js"></script>
+    <script src="./utils/jquery-data-table.min.js"></script>
+    <script src="./js/index.js"></script>
+    <script src="./js/utilFunctions.js"></script>
+</body>
+</html>

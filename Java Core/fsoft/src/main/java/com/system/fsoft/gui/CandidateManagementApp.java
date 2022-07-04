@@ -14,9 +14,6 @@ import java.util.Scanner;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import com.system.fsoft.controller.CandidateController;
 import com.system.fsoft.controller.CertificateController;
 import com.system.fsoft.controller.ExperienceController;
@@ -33,8 +30,6 @@ import com.system.fsoft.exception.PhoneException;
 import com.system.fsoft.utils.Validator;
 
 public class CandidateManagementApp {
-
-	private final Logger log = LogManager.getLogger(CandidateManagementApp.class.getName());
 
 	private Scanner in = new Scanner(System.in);
 	private TableList tableCandidate = this.createTableCandidate();

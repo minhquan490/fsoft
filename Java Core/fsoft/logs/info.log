@@ -1,0 +1,12 @@
+10/06/2022 09:07:39 INFO  com.system.fsoft.controller.CertificateController - Certificate controller created
+10/06/2022 09:07:41 INFO  com.system.fsoft.controller.CandidateController - Candidate controller created
+10/06/2022 09:07:41 INFO  com.system.fsoft.config.database.DataSource - Connection created
+10/06/2022 19:44:02 INFO  com.system.fsoft.controller.CertificateController - Certificate controller created
+10/06/2022 19:44:43 INFO  com.system.fsoft.controller.ExperienceController - Experience controller with single experience is created
+10/06/2022 19:44:43 INFO  com.system.fsoft.config.database.DataSource - Connection created
+10/06/2022 19:44:43 INFO  com.system.fsoft.config.database.DataSource - Connection created
+10/06/2022 19:44:43 INFO  com.system.fsoft.config.database.DataSource - Connection created
+10/06/2022 19:44:43 INFO  com.system.fsoft.repository.impl.CandidateRepositoryImpl - Save Candidate success
+10/06/2022 19:44:43 INFO  com.system.fsoft.repository.impl.ExperienceRepositoryImpl - Save success
+10/06/2022 19:44:53 INFO  com.system.fsoft.controller.CandidateController - Candidate controller created
+10/06/2022 19:44:53 INFO  com.system.fsoft.config.database.DataSource - Connection created

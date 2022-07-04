@@ -1,0 +1,22 @@
+:root {
+    font-size: 10px;
+    box-sizing: border-box;
+}
+
+.green {
+    background-color: #28A745;
+}
+
+.orange {
+    background-color: #FFC107;
+}
+
+.row-height {
+    height: 40px;
+}
+
+.flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

@@ -1,0 +1,15 @@
+.container-fluid {
+    width: 80%;
+}
+
+.container-fluid > .row {
+    margin: 10px 0;
+}
+
+[class*="col"] + [class*="col"] {
+    margin-left: 10px;
+}
+
+.col-70 {
+    width: 70%;
+}

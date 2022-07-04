@@ -16,6 +16,7 @@ public class Candidate implements Serializable {
 	private int totalCertificate;
 
 	public Candidate() {
+
 	}
 
 	public Candidate(String candidateID, String fullName, Date birthDate, String phone, String email) {

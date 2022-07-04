@@ -1,0 +1,54 @@
+:root {
+    font-size: 10px;
+    box-sizing: border-box;
+}
+
+input {
+    outline: none;
+}
+
+option {
+    padding: 4px 0 4px 0;
+}
+
+.custom-border {
+    width: 100%;
+    border-bottom: solid 1px black;
+}
+
+.flex {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header-font {
+    font-size: 2.4rem;
+    font-weight: 700;
+    line-height: 4rem;
+}
+
+.option {
+    display: flex;
+    flex-direction: column;
+    width: 30%;
+    padding-top: 12px;
+}
+
+.option>span {
+    font-size: 1.4rem;
+    font-weight: 700;
+    padding-bottom: 4px;
+}
+
+.option>input {
+    line-height: 2.5rem;
+    border-radius: 5px;
+}
+
+.select {
+    background-color: transparent;
+    font-size: 1.4rem;
+    height: 30px;
+    border-radius: 5px;
+}

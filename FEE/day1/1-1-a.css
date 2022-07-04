@@ -1,0 +1,88 @@
+:root {
+    font-size: 10px;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.color {
+    background: #eee;
+    text-align: center;
+    border: 2px solid white;
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    justify-content: space-between;
+}
+
+.header {
+    height: 180px;
+}
+
+.header__logo {
+    height: 33.33%;
+    text-align: left;
+    display: flex;
+    font-size: 2rem;
+    padding: 0 1.5rem 0 1.5rem;
+}
+
+.header__navigation {
+    height: 16.67%;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.header__banner {
+    height: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 3rem;
+}
+
+.content {
+    display: inline-flex;
+    justify-content: space-around;
+    height: 354px;
+}
+
+.content__side-bar {
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-right: 8px solid white;
+    border-top: 16px solid white;
+    border-bottom: 16px solid white;
+    font-size: 2rem;
+}
+
+.content__main {
+    width: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-left: 8px solid white;
+    border-top: 16px solid white;
+    border-bottom: 16px solid white;
+    font-size: 2rem;
+}
+
+.footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    font-size: 2.6rem;
+}

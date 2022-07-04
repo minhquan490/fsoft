@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Kaushan+Script&display=swap');
+:root {
+    font-size: 10px;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #EEEEEE !important;
+    font-family: 'Kaushan Script', cursive !important;
+}
+
+.hide {
+    display: none;
+}
+
+.card-name-tag {
+    padding: 10px;
+}
+.invalid{
+    box-shadow: 1px 1px 1px 1px red;
+}
+.form-message{
+    color: red;
+    font-weight: 500;
+    font-style: italic;
+    font-size: 12px;
+}

@@ -1,0 +1,114 @@
+:root {
+    font-size: 10px;
+    box-sizing: border-box;
+    --height: 50vh;
+    --width: 100vw;
+}
+
+body {
+    margin: 0;
+    width: var(--width);
+    height: var(--height);
+    background-color: #D0E3EA;
+}
+
+.container {
+    padding: 16px;
+    display: grid;
+    grid-template-rows: 1fr 1fr;
+    height: calc(100% - 32px);
+}
+
+.event {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-gap: 2rem;
+    height: calc((var(--height) / 4) * 3);
+}
+
+.event>div {
+    background-color: white;
+}
+
+.event__content {
+    display: flex;
+    overflow: hidden;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+    box-shadow: 0 8px 8px -4px lightblue;
+}
+
+.event__content:nth-child(3) .event__content--header {
+    background-color: #409063;
+}
+
+.event__content:nth-child(4) .event__content--header {
+    background-color: #5696B0;
+}
+
+.event__content:nth-child(3) .event__content--body .title {
+    color: #409063;
+}
+
+.event__content:nth-child(4) .event__content--body .title {
+    color: #5696B0;
+}
+
+.event__content--header {
+    background-color: #DE5646;
+    width: 35%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    color: #F9EFED;
+    border-bottom-left-radius: 5px;
+    border-top-left-radius: 5px;
+    flex-shrink: 0;
+}
+
+.event__content--body {
+    width: 65%;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+}
+
+.calendar {
+    height: calc((var(--height) / 4) - 16px);
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    font-size: 1.6rem;
+    color: #89B5C8;
+    font-weight: 700;
+}
+
+.calendar>span {
+    margin-right: calc(var(--width) / 10);
+    border: 1px solid #89B5C8;
+    border-radius: 50px;
+    padding: 8px;
+}
+
+.day {
+    font-size: 1.5rem;
+}
+
+.month-year {
+    font-weight: 700;
+}
+
+.title {
+    line-height: 2rem;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #D16A5E;
+}
+
+.content {
+    font-size: 1.5rem;
+    font-weight: 500;
+}

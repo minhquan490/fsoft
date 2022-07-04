@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/solid.css" integrity="sha384-Tv5i09RULyHKMwX0E8wJUqSOaXlyu3SQxORObAI08iUwIalMmN5L6AvlPX2LMoSE" crossorigin="anonymous" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.4/css/fontawesome.css" integrity="sha384-jLKHWM3JRmfMU0A5x5AkjWkw/EYfGUAGagvnfryNV3F9VqM98XiIH7VBGVoxVSc7" crossorigin="anonymous" />
+    <link rel="stylesheet" href="./final.css">
+    <title>Document</title>
+</head>
+
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-9 col-sm-9 col-md-9 col-lg-9 col-xl-9">
+                <div class="row ml-0 bg-product-info">
+                    <span class="custom-font">Thông tin sản phẩm</span>
+                </div>
+                <div class="row pt-3">
+                    <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                        <div class="form-group">
+                            <label for="productID">Mã sản phẩm</label>
+                            <input type="text" class="form-control" id="productID" aria-describedby="productHelpID" placeholder="Mã sản phẩm">
+                            <small id="productHelpID" class="form-text text-muted">
+                                <span></span>
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="manufacturer">Hãng sản xuất</label>
+                            <select class="form-control" id="manufacturer">
+                                <option value="">-Chọn hãng sản xuất-</option>
+                                <option value="Samsung">Samsung</option>
+                                <option value="Oppo">Oppo</option>
+                                <option value="Vin">Vin</option>
+                              </select>
+                        </div>
+                    </div>
+                    <div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                        <div class="row">
+                            <div class="form-group custom-width">
+                                <label for="productName">Tên sản phẩm</label>
+                                <input type="text" class="form-control" id="productName" aria-describedby="productNameHelp" placeholder="Tên sản phẩm">
+                                <small id="productNameHelp" class="form-text text-muted">
+                                    <span></span>
+                                </small>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-8 col-sm-8 col-md-8 col-lg-8 col-xl-8">
+                                <div class="row justify-content-between">
+                                    <div class="form-group custom-width">
+                                        <label for="category">Danh mục sản phẩm</label>
+                                        <select class="form-control" id="category">
+                                            <option value="">-Chọn danh mục sản phẩm-</option>
+                                            <option value="cell phone">Điện thoại</option>
+                                            <option value="television">Tivi</option>
+                                            <option value="fridge">Tủ lạnh</option>
+                                          </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4 pr-0">
+                                <div class="form-group">
+                                    <label for="currency">Đơn vị tính</label>
+                                    <select class="form-control" id="currency">
+                                        <option value="">-Đơn vị tính-</option>
+                                        <option value="Dong">đ</option>
+                                        <option value="USD">$</option>
+                                        <option value="Euro">€</option>
+                                      </select>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3 pr-0">
+                        <div style="padding-bottom: 1px;" class="form-group">
+                            <label for="price">Giá bán</label>
+                            <input type="number" class="form-control" name="" id="price" aria-describedby="priceHelp" placeholder="Giá bán">
+                            <small id="priceHelp" class="form-text text-muted">
+                                <span></span>
+                            </small>
+                        </div>
+                        <div class="form-group">
+                            <label for="amount">Số lượng sản phẩm</label>
+                            <input type="number" class="form-control" name="" id="amount" aria-describedby="amountHelp" placeholder="Số lượng sản phẩm">
+                            <small id="amountHelp" class="form-text text-muted">
+                                <span></span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                <div class="row">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+                        <div class="row ml-0 bg-product-info">
+                            <span class="custom-font">Thông tin thuế</span>
+                        </div>
+                    </div>
+                </div>
+                <div style="height: 80%;" class="row flex-column ml-0 justify-content-around">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="taxValue">
+                        <label class="form-check-label" for="taxValue">
+                              VAT (10%)
+                            </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="serviceTaxType1">
+                        <label class="form-check-label" for="serviceTaxType1">
+                              Dịch vụ loại 1 (20%)
+                            </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="serviceTaxType2">
+                        <label class="form-check-label" for="serviceTaxType2">
+                              Dịch vụ loại 2 (5%)
+                            </label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="" id="orderTaxes">
+                        <label class="form-check-label" for="orderTaxes">
+                              Khác (15%)
+                            </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row ml-0">
+            <button type="button" class="btn btn-secondary custom-btn">Lưu thông tin sản phẩm</button>
+        </div>
+        <div class="row mt-3 ml-0">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th scope="col">Mã SP</th>
+                        <th scope="col">Tên SP</th>
+                        <th scope="col">Hãng sản xuất</th>
+                        <th scope="col">Danh mục SP</th>
+                        <th scope="col">Giá bán</th>
+                        <th scope="col">Số lượng</th>
+                        <th scope="col">Tiền thuế</th>
+                        <th scope="col">Thành tiền</th>
+                        <th scope="col">Delete</th>
+                    </tr>
+                </thead>
+                <tbody>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script type="module" src="./js/final.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.3/dist/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
+</body>
+
+</html>

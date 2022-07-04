@@ -1,0 +1,12 @@
+body {
+    width: 80%;
+    margin: 0 auto;
+}
+
+.row div:nth-child(even) {
+    background-color: #ffc107;
+}
+
+.row div:nth-child(odd) {
+    background-color: #28a745;
+}

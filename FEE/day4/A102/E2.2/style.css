@@ -1,0 +1,142 @@
+*,
+*::after,
+*::before {
+    box-sizing: border-box;
+}
+
+body {
+    height: 100vh;
+    margin: 0;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    background: url(img/1.jpg);
+    background-repeat: no-repeat;
+    background-size: cover;
+    position: relative;
+    color: #fff;
+}
+
+.header {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 500px;
+    text-align: center;
+}
+
+.header h1 {
+    margin: 20px 0;
+    font-weight: 700;
+    font-size: 3rem;
+    line-height: 1;
+}
+
+.header p {
+    font-size: 1.2rem;
+    margin: 5px 0;
+    font-weight: 200;
+    opacity: 0.7;
+}
+
+.header p + p {
+    font-size: 1.3;
+    font-weight: 500;
+    opacity: 0.9;
+}
+
+.button {
+    padding-top: 2em;
+    font-size: 0.8rem;
+}
+
+.button a {
+    display: inline-block;
+    color: #fff;
+    text-decoration: none;
+    border: 2px solid white;
+    padding: 10px 15px;
+    margin: 5px;
+    outline: none;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    min-width: 165px;
+
+    background: linear-gradient(to left, transparent 50%, rgba(255, 255, 255, 0.3) 50%) right;
+    background-size: 200%;
+    transition: 0.5s ease-out;
+}
+
+.button a:hover {
+    background-position: left;
+}
+
+.nav .prev {
+    width: 50px;
+    height: 50px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    left: 5%;
+    transform: rotate(45deg);
+    border: 3px solid rgba(255, 255, 255, 0.7);
+    border-top: 0;
+    border-right: 0;
+    transition: all 0.3s;
+}
+
+.nav .prev:hover {
+    transform: translateX(10px) rotate(45deg) skew(-10deg, -10deg);
+    border-color: white;
+    cursor: pointer;
+    animation: prev 0.2s linear;
+}
+
+@keyframes prev {
+    0% {
+        transform: rotate(45deg);
+        border-color: rgba(255, 255, 255, 0.7);
+    }
+
+    100% {
+        transform: translateX(10px) rotate(45deg) skew(-10deg, -10deg);
+        border-color: white;
+    }
+}
+
+.nav .next {
+    width: 50px;
+    height: 50px;
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    right: 5%;
+    transform: rotate(45deg);
+    border: 3px solid rgba(255, 255, 255, 0.7);
+    border-bottom: 0;
+    border-left: 0;
+    transition: all 300ms;
+}
+
+.nav .next:hover {
+    transform: translateX(-10px) rotate(45deg) skew(-10deg, -10deg);
+    border-color: white;
+    cursor: pointer;
+    animation: test 0.2s linear;
+}
+
+@keyframes next {
+    0% {
+        transform: rotate(45deg);
+        border-color: rgba(255, 255, 255, 0.7);
+    }
+
+    100% {
+        transform: translateX(-10px) rotate(45deg) skew(-10deg, -10deg);
+        border-color: white;
+    }
+}
